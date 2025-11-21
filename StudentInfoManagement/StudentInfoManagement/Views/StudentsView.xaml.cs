@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace StudentInfoManagement.Views
@@ -9,8 +10,8 @@ namespace StudentInfoManagement.Views
         {
             InitializeComponent();
             LoadData();
-            
         }
+
         private void LoadData()
         {
             // Tạo danh sách sinh viên mẫu
@@ -23,6 +24,22 @@ namespace StudentInfoManagement.Views
 
             // Gán vào DataGrid
             StudentsGrid.ItemsSource = students;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+           box.Visibility = Visibility.Visible;
+           
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+        
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            box.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -8,4 +8,26 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Views\icon\.png" />
+    <None Remove="Views\icon\iconadd.png" />
+    <None Remove="Views\icon\iconimport.png" />
+    <None Remove="Views\icon\iconsave.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\icon\.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\icon\iconadd.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\icon\iconimport.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\icon\iconsave.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
 </Project>

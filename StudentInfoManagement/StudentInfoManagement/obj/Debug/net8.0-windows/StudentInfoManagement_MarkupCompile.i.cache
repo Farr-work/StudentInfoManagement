@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\
+C:\Users\ADMIN\OneDrive\Desktop\csap\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\
 StudentInfoManagement
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\App.xaml
+C:\Users\ADMIN\OneDrive\Desktop\csap\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\App.xaml
 51871186460
 
 111000921009
-198-2136442823
+198-192518753
 MainWindow.xaml;Views\CoursesView.xaml;Views\DashboardView.xaml;Views\SettingViews.xaml;Views\StudentsView.xaml;
 
 False
