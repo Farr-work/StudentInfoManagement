@@ -25,3 +25,32 @@ D:\Workspace\EPU\LT_NET\Project\StudentInfoManagement\StudentInfoManagement\obj\
 D:\Workspace\EPU\LT_NET\Project\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\StudentsView.g.cs
 D:\Workspace\EPU\LT_NET\Project\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\SettingViews.baml
 D:\Workspace\EPU\LT_NET\Project\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\SettingViews.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\bin\Debug\net8.0-windows\StudentInfoManagement.exe
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\bin\Debug\net8.0-windows\StudentInfoManagement.deps.json
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\bin\Debug\net8.0-windows\StudentInfoManagement.runtimeconfig.json
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\bin\Debug\net8.0-windows\StudentInfoManagement.dll
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\bin\Debug\net8.0-windows\StudentInfoManagement.pdb
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\MainWindow.baml
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\CoursesView.baml
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\DashboardView.baml
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\SettingViews.baml
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\StudentsView.baml
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\CoursesView.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\DashboardView.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\SettingViews.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\Views\StudentsView.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement_MarkupCompile.cache
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.g.resources
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.AssemblyInfoInputs.cache
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.AssemblyInfo.cs
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.csproj.CoreCompileInputs.cache
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.sourcelink.json
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.dll
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\refint\StudentInfoManagement.dll
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.pdb
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\StudentInfoManagement.genruntimeconfig.cache
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\ref\StudentInfoManagement.dll
+C:\Users\phong\OneDrive\Máy tính\git2\StudentInfoManagement\StudentInfoManagement\StudentInfoManagement\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
