@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using StudentInfoManagement.Views;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -42,7 +43,7 @@ namespace StudentInfoManagement
                     break;
 
                 case "Students":
-                    MainContent.Content = CreatePlaceholder("Students Management View");
+                    MainContent.Content = new StudentsView();
                     break;
 
                 case "Courses":
