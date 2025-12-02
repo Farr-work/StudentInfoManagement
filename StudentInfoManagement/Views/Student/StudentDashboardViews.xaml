@@ -1,0 +1,242 @@
+﻿<UserControl x:Class="StudentInfoManagement.Views.StudentDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1000"
+             FontFamily="Calibri, Segoe UI">
+
+    <UserControl.Resources>
+        <Style x:Key="WhiteCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Opacity="0.05" BlurRadius="10" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActivityItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <SolidColorBrush x:Key="BlueColor" Color="#2563EB"/>
+        <SolidColorBrush x:Key="GreenColor" Color="#22C55E"/>
+        <SolidColorBrush x:Key="OrangeColor" Color="#F97316"/>
+        <SolidColorBrush x:Key="RedColor" Color="#EF4444"/>
+        <SolidColorBrush x:Key="PurpleColor" Color="#A855F7"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#111827"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
+    </UserControl.Resources>
+
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Dashboard" 
+                   FontSize="28" 
+                   FontWeight="Bold" 
+                   Foreground="{StaticResource TextPrimary}"
+                   Margin="0,0,0,20"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource WhiteCardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="Tổng sinh viên" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="👥" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource BlueColor}"/>
+                    </Grid>
+                    <TextBlock Text="1,180" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock Text="+12% so với năm trước" FontSize="13" Foreground="{StaticResource BlueColor}" FontWeight="Medium"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource WhiteCardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="Khóa học" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="📖" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource GreenColor}"/>
+                    </Grid>
+                    <TextBlock Text="48" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock Text="Đang hoạt động" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource WhiteCardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="Tốt nghiệp" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="🎓" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource OrangeColor}"/>
+                    </Grid>
+                    <TextBlock Text="210" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock Text="Năm học 2024" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="3" Style="{StaticResource WhiteCardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="Thôi học" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="👤❌" FontSize="18" HorizontalAlignment="Right" Foreground="{StaticResource RedColor}"/>
+                    </Grid>
+                    <TextBlock Text="15" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock Text="Năm học 2024" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource WhiteCardStyle}" Margin="5,0,10,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                        <TextBlock Text="🕒" FontSize="18" Margin="0,0,10,0" Foreground="{StaticResource TextPrimary}"/>
+                        <TextBlock Text="Hoạt động gần đây" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                    </StackPanel>
+
+                    <Border Style="{StaticResource ActivityItemStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource GreenColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Đã thêm môn học ..." FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="5 phút trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ActivityItemStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource BlueColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="A đã xóa một môn học" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="15 phút trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ActivityItemStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource OrangeColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Lê Văn C đã cập nhật thông tin cá nhân" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="1 giờ trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ActivityItemStyle}" Margin="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource PurpleColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Đã thêm một thông báo" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="2 giờ trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource WhiteCardStyle}" Margin="10,0,5,0">
+                <StackPanel>
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🔔" FontSize="18" Margin="0,0,10,0" Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="Thông báo" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="1" 
+                                Width="32" Height="32"
+                                Background="Transparent" 
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Thêm thông báo mới">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="#EFF6FF" CornerRadius="16" x:Name="border">
+                                        <TextBlock Text="+" 
+                                                   FontSize="22" 
+                                                   FontWeight="Bold" 
+                                                   Foreground="{StaticResource BlueColor}"
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,-2,0,0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#DBEAFE"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Lịch thi học kỳ 2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="Đã cập nhật ngày 01/12/2025" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Đăng ký môn học HK2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="Mở từ 15/12 - 25/12" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="Nộp học phí đợt 2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="Hạn chót: 20/12/2025" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
