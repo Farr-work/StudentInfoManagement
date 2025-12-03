@@ -6,84 +6,265 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900" Background="White">
 
-    <Grid Margin="20">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#2563EB"/>
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="Auto" MinHeight="67"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,20">
+        <TextBlock Text="Quản Lý Sinh Viên1"
+                   FontSize="24"
+                   VerticalAlignment="Top" Margin="20,28,0,0" Height="42" FontWeight="Bold"/>
+
+        <Grid Grid.Row="1" Margin="20,10,20,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel>
-                <TextBlock Text="Students Management" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
-                <TextBlock Text="Manage student records and admission" FontSize="14" Foreground="#6B7280" Margin="0,5,0,0"/>
-            </StackPanel>
+            <TextBox Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1" Margin="0,8,0,4"/>
 
-            <Border Grid.Column="1" Width="250" Height="40" CornerRadius="6" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,15,0" Padding="10,0">
-                <Grid>
-                    <TextBlock Text="Search student..." VerticalAlignment="Center" Foreground="#9CA3AF" IsHitTestVisible="False"/>
-                    <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
+            <Button Grid.Column="1"
+                    Width="80" Margin="10,10,0,4"
+                    Foreground="Green">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderThickness="1" BorderBrush="Green" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <Image Source="/icon/iconsave.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Lưu" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
 
-            <Button Grid.Column="2" Background="#1D4ED8" Foreground="White" BorderThickness="0" Padding="20,10">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="+" Margin="0,0,8,0" FontWeight="Bold"/>
-                    <TextBlock Text="Add Student"/>
-                </StackPanel>
+            <Button Grid.Column="2" 
+                    Width="100" Margin="10,10,0,4"
+                    Foreground="#2563EB">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderThickness="1" BorderBrush="#2563EB" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+
+                                <Image Source="/icon/iconimport.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Xuất CSV" VerticalAlignment="Center"/>
+
+
+
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Grid.Column="3" Content="Add New Students"
+                    Width="130" Margin="10,10,0,4"
+                    Foreground="White" Click="Button_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderThickness="1" Background="#2563EB" BorderBrush="#2563EB" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+
+                                <Image Source="/icon/iconadd.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Thêm Sinh Viên" VerticalAlignment="Center"/>
+
+
+
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </Grid>
 
-        <DataGrid Grid.Row="1" x:Name="StudentsGrid" AutoGenerateColumns="False" CanUserAddRows="False" 
-                  HeadersVisibility="Column" Background="White" BorderThickness="1" BorderBrush="#E5E7EB"
-                  RowHeight="45" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F3F4F6">
+        <Grid Grid.Row="2" Margin="20,20,20,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-            <DataGrid.Resources>
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#F9FAFB"/>
-                    <Setter Property="Padding" Value="10"/>
-                    <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                    <Setter Property="BorderBrush" Value="#E5E7EB"/>
-                </Style>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="Padding" Value="10,0"/>
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="DataGridCell">
-                                <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                                    <ContentPresenter VerticalAlignment="Center" />
+            <Label Content="Danh Sách Sinh Viên"
+                   FontSize="20" FontWeight="Bold"
+                   Margin="0,0,0,10"/>
+
+            <Border Grid.Row="1" BorderBrush="Gray" 
+                    BorderThickness="2" CornerRadius="10" Margin="0">
+                <DataGrid x:Name="StudentsGrid"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          BorderThickness="0"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E5E7EB"
+                          RowHeight="48"
+                          ColumnHeaderHeight="40" Margin="8,8,8,8">
+
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Padding" Value="10"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                        </Style>
+
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="10,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Padding="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mã Sinh Viên" Binding="{Binding masv}" Width="100"/>
+                        <DataGridTextColumn Header="Họ tên" Binding="{Binding hoten}" Width="200"/>
+                        <DataGridTextColumn Header="Tên Lớp" Binding="{Binding tenlop}" Width="100"/>
+                        <DataGridTextColumn Header="Giới Tính" Binding="{Binding gioitinh}" Width="100"/>
+                        <DataGridTextColumn Header="Địa chỉ" Binding="{Binding diachi}" Width="150"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="120"/>
+                        <DataGridTextColumn Header="Số Điện Thoại" Binding="{Binding sdt}" Width="100"/>
+                        <DataGridTextColumn Header="Trạng Thái" Binding="{Binding trangthai}" Width="100"/>
+                        <DataGridTemplateColumn Header="Action" Width="300" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </Border>
+        </Grid>
+        <Border Background="White" x:Name="box" BorderBrush="Black" BorderThickness="1" Margin="228,13,182,29" Visibility="Hidden" Width="490" Grid.RowSpan="2" Grid.Row="1" Height="488" >
+            <Grid Width="488" Height="486">
+                <Label Content="Add New Student" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
+
+                <Grid Grid.Row="1" Margin="20,10,20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0"
+                            VerticalContentAlignment="Center"
+                            BorderBrush="Black" BorderThickness="1"
+                            Text="" Margin="-10,61,10,407"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="-10,130,10,306"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="-10,194,253,241"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="-10,61,10,375"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="236,194,10,241"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="-10,265,10,171"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="-10,334,253,102"/>
+                    <TextBox Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Black" BorderThickness="1"
+                        Text="" Margin="236,334,7,102"/>
+                    <Button  Margin="306,402,10,34"
+                         Foreground="Blue">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border BorderThickness="1" BorderBrush="Blue" CornerRadius="5" Background="Blue">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+
+                                        <TextBlock Text="Save Chances" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
+                                    </StackPanel>
                                 </Border>
                             </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </DataGrid.Resources>
+                        </Button.Template>
+                    </Button>
+                    <Button  Margin="200,402,147,34"
+                        Foreground="Blue" Click="Button_Click_2">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border BorderThickness="1" BorderBrush="Black" CornerRadius="5" Background="White">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Full Name" Binding="{Binding Name}" Width="2*"/>
-                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
-                <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="1.5*"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#059669"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                                        <TextBlock Text="Cancel" VerticalAlignment="Center" Foreground="Black" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                </Grid>
+                <Label Content="Student ID:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Full Name:" HorizontalAlignment="Left" Margin="10,113,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Class:" HorizontalAlignment="Left" Margin="13,179,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Gender:" HorizontalAlignment="Left" Margin="254,179,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Address:" HorizontalAlignment="Left" Margin="13,250,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Phone:" HorizontalAlignment="Left" Margin="13,317,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="Date:" HorizontalAlignment="Left" Margin="254,317,0,0" VerticalAlignment="Top" FontSize="14"/>
+            </Grid>
+
+        </Border>
+
     </Grid>
 </UserControl>
