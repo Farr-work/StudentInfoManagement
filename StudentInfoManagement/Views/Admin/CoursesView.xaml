@@ -3,65 +3,583 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StudentInfoManagement.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="900" Background="White">
+             d:DesignHeight="700" d:DesignWidth="1200" 
+             Background="White"
+             PreviewMouseWheel="Child_PreviewMouseWheel">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <Style TargetType="TextBox" x:Key="ModalTextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <Grid Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel>
-                <TextBlock Text="Courses Overview" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
-                <TextBlock Text="View and manage available courses" FontSize="14" Foreground="#6B7280" Margin="0,5,0,0"/>
-            </StackPanel>
+        <Style TargetType="ComboBox" x:Key="ModalInputComboBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
 
-            <Button HorizontalAlignment="Right" VerticalAlignment="Center" Background="#1D4ED8" Foreground="White" BorderThickness="0" Padding="20,10">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
+        <Style x:Key="BtnCancelStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#6C757D"/>
+            <Setter Property="BorderBrush" Value="#DEE2E6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F8F9FA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BtnSaveStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#28A745"/>
+            <Setter Property="BorderBrush" Value="#28A745"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="💾" Margin="0,0,8,0" FontSize="14"/>
+                                <ContentPresenter/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BtnExportStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#0D6EFD"/>
+            <Setter Property="BorderBrush" Value="#0D6EFD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="⬇" Margin="0,0,8,0" FontWeight="Bold"/>
+                                <ContentPresenter/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BtnAddStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0D6EFD"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="+" Margin="0,0,8,0" FontWeight="Bold"/>
+                                <ContentPresenter/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CardBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="0.05" BlurRadius="10"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="grid" Background="#C1C1C1" CornerRadius="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="grid" Value="#A8A8A8"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter Property="Background" TargetName="grid" Value="#787878"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+            <Setter Property="Foreground" Value="#ADADAD"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Width="{TemplateBinding Width}" Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernScrollViewer" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{StaticResource ModernScrollBar}"/>
+                            <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{StaticResource ModernScrollBar}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="ComboToggleButtonTemplate" TargetType="ToggleButton">
+            <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <Path Grid.Column="1" Data="M0,0 L4,4 L8,0" Stroke="#6C757D" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="Transparent"/>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+        <Style TargetType="ComboBox">
+            <Setter Property="FrameworkElement.Height" Value="40"/>
+            <Setter Property="Foreground" Value="#495057"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Name="ToggleButton" Template="{StaticResource ComboToggleButtonTemplate}" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="White" BorderThickness="1" BorderBrush="#DEE2E6" CornerRadius="5" Margin="0,5,0,0">
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                                        </Border.Effect>
+                                        <ScrollViewer Margin="2" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border Name="Bd" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#E9ECEF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#0D6EFD"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
-                </Button.Resources>
-                <TextBlock Text="+ New Course"/>
-            </Button>
-        </Grid>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
-        <DataGrid Grid.Row="1" x:Name="CoursesGrid" AutoGenerateColumns="False" CanUserAddRows="False"
-                  HeadersVisibility="Column" Background="White" BorderThickness="1" BorderBrush="#E5E7EB"
-                  RowHeight="50" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F3F4F6">
+    <Grid>
+        <ScrollViewer x:Name="MainScrollViewer" 
+                      Style="{StaticResource ModernScrollViewer}"
+                      CanContentScroll="False"
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled" 
+                      HorizontalAlignment="Stretch">
 
-            <DataGrid.Resources>
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#F9FAFB"/>
-                    <Setter Property="Padding" Value="10"/>
-                    <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                    <Setter Property="BorderBrush" Value="#E5E7EB"/>
-                </Style>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="Padding" Value="10,0"/>
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="DataGridCell">
-                                <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                                    <ContentPresenter VerticalAlignment="Center" />
+            <Grid Margin="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Course Management" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Foreground="#212529"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Save" Style="{StaticResource BtnSaveStyle}" Width="100" Margin="0,0,10,0"/>
+                        <Button Content="Export CSV" Style="{StaticResource BtnExportStyle}" Width="140" Margin="0,0,10,0" Click="BtnExportCSV_Click"/>
+                        <Button Content="Add New Course" Style="{StaticResource BtnAddStyle}" Width="180" Margin="0,0,10,0" Click="BtnAddCourse_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Filter Courses" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#343A40"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Search Course" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <Border BorderBrush="#CED4DA" BorderThickness="1" CornerRadius="5" Height="40">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="🔍" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#6C757D"/>
+                                        <TextBox Grid.Column="1" Text="Search by code or course name..." VerticalAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="#6C757D"/>
+                                    </Grid>
                                 </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </DataGrid.Resources>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Filter by Semester" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <ComboBox Height="40" SelectedItem="All Semesters" HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="All Semesters"/>
+                                    <ComboBoxItem Content="Semester 1"/>
+                                    <ComboBoxItem Content="Semester 2"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Filter by Academic Year" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <ComboBox Height="40" SelectedItem="All Years" HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="All Years"/>
+                                    <ComboBoxItem Content="Year 1"/>
+                                    <ComboBoxItem Content="Year 2"/>
+                                    <ComboBoxItem Content="Year 3"/>
+                                    <ComboBoxItem Content="Year 4"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="80" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Course Name" Binding="{Binding CourseName}" Width="2*"/>
-                <DataGridTextColumn Header="Credits" Binding="{Binding Credits}" Width="80"/>
-                <DataGridTextColumn Header="Instructor" Binding="{Binding Instructor}" Width="1.5*"/>
-                <DataGridTextColumn Header="Students" Binding="{Binding Enrolled}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Courses List (6)" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="#212529"/>
+                        <DataGrid x:Name="dgCourses" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal" Background="White" BorderThickness="0" RowHeight="55" HorizontalGridLinesBrush="#F0F0F0" VerticalContentAlignment="Center" SelectionMode="Single" SelectionUnit="FullRow">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="Foreground" Value="#212529"/>
+                                    <Setter Property="Padding" Value="10,0,0,10"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    <Setter Property="BorderBrush" Value="#F0F0F0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Padding" Value="10,0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="DataGridCell">
+                                                <Border Padding="{TemplateBinding Padding}" BorderThickness="0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#F8F9FA"/>
+                                            <Setter Property="Foreground" Value="Black"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F5F7F9"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#E9ECEF"/>
+                                            <Setter Property="Foreground" Value="Black"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Course Code" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding CourseCode}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Course Name" Width="*" MinWidth="200">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding CourseName}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Credits" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Credits}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Department" Width="180">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Department}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Semester" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Semester}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Year" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Year}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Actions" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="0,0,15,0" ToolTip="Edit">
+                                                    <TextBlock Text="✎" FontSize="18" Foreground="#343A40"/>
+                                                </Button>
+                                                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Delete">
+                                                    <TextBlock Text="🗑" FontSize="16" Foreground="#DC3545"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                            <DataGrid.ItemsSource>
+                                <x:Array Type="{x:Type local:CourseData}">
+                                    <local:CourseData CourseCode="CS201" CourseName="Data Structures" Credits="4" Department="Computer Science" Semester="Semester 1" Year="Year 2"/>
+                                    <local:CourseData CourseCode="CS301" CourseName="Algorithms" Credits="4" Department="Computer Science" Semester="Semester 2" Year="Year 2"/>
+                                    <local:CourseData CourseCode="BUS101" CourseName="Business Fundamentals" Credits="3" Department="Business" Semester="Semester 1" Year="Year 1"/>
+                                    <local:CourseData CourseCode="BUS201" CourseName="Business Management" Credits="3" Department="Business" Semester="Semester 1" Year="Year 2"/>
+                                    <local:CourseData CourseCode="ENG101" CourseName="Engineering Basics" Credits="4" Department="Engineering" Semester="Semester 1" Year="Year 1"/>
+                                    <local:CourseData CourseCode="ENG201" CourseName="Advanced Engineering" Credits="4" Department="Engineering" Semester="Semester 2" Year="Year 2"/>
+                                </x:Array>
+                            </DataGrid.ItemsSource>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid x:Name="ModalAddCourse" Visibility="Collapsed">
+            <Border Background="#000000" Opacity="0.5" MouseDown="BtnCloseModal_Click"/>
+            <Border Background="White" CornerRadius="10" Width="600" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="5" Opacity="0.2"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="20,20,20,10">
+                        <TextBlock Text="Add New Course" FontSize="20" FontWeight="Bold" Foreground="#212529"/>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnCloseModal_Click">
+                            <TextBlock Text="✕" FontSize="18" Foreground="#6C757D"/>
+                        </Button>
+                    </Grid>
+                    <Border Grid.Row="0" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1" Margin="0,50,0,0"/>
+
+                    <StackPanel Grid.Row="1" Margin="25">
+
+                        <TextBlock Text="Course Code" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <ComboBox x:Name="cbCourseCode"
+                                  Style="{StaticResource ModalInputComboBox}"
+                                  IsEditable="True"
+                                  StaysOpenOnEdit="True"
+                                  IsTextSearchEnabled="False"
+                                  Margin="0,0,0,15"
+                                  KeyUp="CbCourseCode_KeyUp"/>
+
+                        <TextBlock Text="Course Name" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <ComboBox x:Name="cbCourseName"
+                                  Style="{StaticResource ModalInputComboBox}"
+                                  IsEditable="True"
+                                  StaysOpenOnEdit="True"
+                                  IsTextSearchEnabled="False"
+                                  Margin="0,0,0,15"
+                                  KeyUp="CbCourseName_KeyUp"/>
+
+                        <TextBlock Text="Credits" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <Border BorderBrush="#CED4DA" BorderThickness="1" CornerRadius="5" Background="White" Height="40" Margin="0,0,0,15">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtCredits"
+                                         Text="3"
+                                         VerticalContentAlignment="Center"
+                                         Padding="10,0"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         FontSize="14"
+                                         PreviewTextInput="TxtCredits_PreviewTextInput"
+                                         LostFocus="TxtCredits_LostFocus"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <RepeatButton Click="BtnCreditsUp_Click" Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                        <RepeatButton.Content>
+                                            <Path Data="M0,4 L4,0 L8,4" Stroke="#6C757D" StrokeThickness="1.5" Fill="Transparent"/>
+                                        </RepeatButton.Content>
+                                    </RepeatButton>
+                                    <RepeatButton Click="BtnCreditsDown_Click" Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                        <RepeatButton.Content>
+                                            <Path Data="M0,0 L4,4 L8,0" Stroke="#6C757D" StrokeThickness="1.5" Fill="Transparent"/>
+                                        </RepeatButton.Content>
+                                    </RepeatButton>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Text="Department" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <ComboBox x:Name="cbDepartment"
+                                  Style="{StaticResource ModalInputComboBox}"
+                                  IsEditable="True"
+                                  StaysOpenOnEdit="True"
+                                  IsTextSearchEnabled="False"
+                                  KeyUp="CbDepartment_KeyUp"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="2" Background="#F8F9FA" Margin="0,10,0,0">
+                        <Border CornerRadius="0,0,10,10">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
+                                <Button Content="Cancel" Style="{StaticResource BtnCancelStyle}" Width="100" Margin="0,0,10,0" Click="BtnCloseModal_Click"/>
+                                <Button Content="Save Changes" Width="140" Click="BtnSaveCourse_Click">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="#0D6EFD" CornerRadius="5">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="White" TextElement.FontWeight="Bold" Margin="0,10"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Opacity" Value="0.9"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                        <Border BorderBrush="#DEE2E6" BorderThickness="0,1,0,0" VerticalAlignment="Top"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>
