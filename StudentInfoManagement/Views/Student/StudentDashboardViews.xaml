@@ -47,7 +47,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="Dashboard" 
-                   FontSize="28" 
+                   FontSize="24" 
                    FontWeight="Bold" 
                    Foreground="{StaticResource TextPrimary}"
                    Margin="0,0,0,20"/>

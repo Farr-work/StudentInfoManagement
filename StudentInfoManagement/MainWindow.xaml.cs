@@ -46,7 +46,7 @@ namespace StudentInfoManagement
                     break;
 
                 case "Portal":
-                    MainContent.Content = CreatePlaceholder("Student Portal View");
+                    MainContent.Content = new CoursesPortal();
                     break;
 
                 case "Settings":
