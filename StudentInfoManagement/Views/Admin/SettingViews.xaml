@@ -4,6 +4,239 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="900" Background="White">
+             d:DesignHeight="800" d:DesignWidth="1100"
+             FontFamily="Segoe UI">
 
+    <UserControl.Resources>
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Opacity="0.03" BlurRadius="5" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" CornerRadius="6" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2563EB"/>
+                            </Trigger>
+                            <Trigger Property="IsReadOnly" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F9FAFB"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#E5E7EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PasswordStyle" TargetType="PasswordBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border" CornerRadius="6" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2563EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#F9FAFB" Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Style="{StaticResource CardStyle}" VerticalAlignment="Top" Padding="20">
+            <StackPanel>
+                <Border Width="100" Height="100" CornerRadius="50" Background="#EFF6FF" Margin="0,0,0,15" HorizontalAlignment="Center">
+                    <TextBlock x:Name="txtAvatarIcon" Text="👤" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#2563EB"/>
+                </Border>
+
+                <TextBlock x:Name="txtDisplayName" Text="Admin User" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#111827"/>
+                <TextBlock x:Name="txtDisplayRole" Text="Quản trị viên hệ thống" FontSize="14" HorizontalAlignment="Center" Foreground="#6B7280" Margin="0,5,0,20"/>
+
+                <Separator Background="#E5E7EB" Margin="0,0,0,20"/>
+
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Trạng thái:" Foreground="#6B7280"/>
+                    <TextBlock Text="Hoạt động" Foreground="#16A34A" FontWeight="Bold" HorizontalAlignment="Right"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Quyền hạn:" Foreground="#6B7280"/>
+                    <TextBlock x:Name="txtPermissionLabel" Text="Toàn quyền" Foreground="#111827" HorizontalAlignment="Right"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <Border Style="{StaticResource CardStyle}" Padding="25" Margin="0,0,0,20">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Thông tin hồ sơ" FontSize="18" FontWeight="Bold" Margin="0,0,0,5"/>
+                                <TextBlock x:Name="txtInfoSubLabel" Text="Thông tin chi tiết của tài khoản." FontSize="14" Foreground="#6B7280"/>
+                            </StackPanel>
+
+                            <Button x:Name="btnSaveInfo" Content="Lưu Thay Đổi" Click="BtnSaveInfo_Click"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Width="120" Height="40"
+                                    Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bdr" CornerRadius="6" Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bdr" Property="Background" Value="#1D4ED8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,15">
+                                <TextBlock Text="Mã Định Danh (ID)" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtID" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,15">
+                                <TextBlock Text="Lớp / Phòng Ban" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtClassDept" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,15">
+                                <TextBlock Text="Họ và Tên" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtFullName" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,15">
+                                <TextBlock Text="Ngày sinh" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtDob" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,15">
+                                <TextBlock Text="Email" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtEmail" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,15">
+                                <TextBlock Text="Số điện thoại" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtPhone" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,0,0,5">
+                            <TextBlock Text="Địa chỉ" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="txtAddress" Style="{StaticResource InputStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="25">
+                    <StackPanel>
+                        <TextBlock Text="Bảo mật" FontSize="18" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <TextBlock Text="Đổi mật khẩu định kỳ để bảo vệ tài khoản." FontSize="14" Foreground="#6B7280" Margin="0,0,0,20"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Mật khẩu hiện tại" Style="{StaticResource LabelStyle}"/>
+                                <PasswordBox x:Name="pbCurrentPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
+
+                                <TextBlock Text="Mật khẩu mới" Style="{StaticResource LabelStyle}"/>
+                                <PasswordBox x:Name="pbNewPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
+
+                                <TextBlock Text="Xác nhận mật khẩu mới" Style="{StaticResource LabelStyle}"/>
+                                <PasswordBox x:Name="pbConfirmPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
+
+                                <Button Content="Đổi Mật Khẩu" Click="BtnChangePass_Click"
+                                        HorizontalAlignment="Left" Width="120" Height="40"
+                                        Background="White" Foreground="#DC2626" FontWeight="SemiBold" BorderThickness="1" BorderBrush="#DC2626" Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="bdr" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bdr" Property="Background" Value="#FEF2F2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0">
+                                <TextBlock Text="Yêu cầu mật khẩu:" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="• Tối thiểu 6 ký tự" Foreground="#6B7280" Margin="0,2"/>
+                                <TextBlock Text="• Khác với mật khẩu cũ" Foreground="#6B7280" Margin="0,2"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
