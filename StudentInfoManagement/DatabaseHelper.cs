@@ -8,7 +8,7 @@ namespace StudentInfoManagement
 {
     public class DatabaseHelper
     {
-        private readonly string _connectionString = "Data Source=.;Initial Catalog=StudentManagementDB;Integrated Security=True;TrustServerCertificate=True";
+        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@";
 
         public string HashPassword(string password)
         {
