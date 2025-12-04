@@ -2,19 +2,15 @@
 using StudentInfoManagement.Views.Student;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+// using StudentInfoManagement.Views.Student; // Uncomment khi có Views
 
 namespace StudentInfoManagement
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class StudentWindow : Window
     {
         public StudentWindow()
         {
             InitializeComponent();
-
             NavigateTo("StudentDashboard");
         }
 
@@ -22,9 +18,7 @@ namespace StudentInfoManagement
         {
             if (sender is Button button && button.Tag != null)
             {
-                string viewName = button.Tag.ToString();
-
-                NavigateTo(viewName);
+                NavigateTo(button.Tag.ToString());
             }
         }
 
@@ -33,45 +27,31 @@ namespace StudentInfoManagement
             switch (viewName)
             {
                 case "StudentDashboard":
-                    MainContent.Content = new StudentDashboardViews();
-                    // Tạm thời dùng TextBlock để test nếu bạn chưa tạo UserControl
-                    //MainContent.Content = CreatePlaceholder("Dashboard View");
+                     MainContent.Content = new StudentDashboardViews();
                     break;
 
                 case "StudentCourses":
-                    MainContent.Content = new CoursesView();
+                     MainContent.Content = new StudentCoursesView();
                     break;
 
                 case "StudentClasses":
-                    MainContent.Content = new StudentClassesView();
+                     MainContent.Content = new StudentClassesView();
                     break;
 
-                case "Settings":
-                    MainContent.Content = new SettingViews();
-                    break;
-
-                default:
+                case "StudentSettings":
+                     MainContent.Content = new StudentSettingView();
                     break;
             }
         }
 
-        private TextBlock CreatePlaceholder(string text)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                FontSize = 24,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Foreground = Brushes.Gray
-            };
-        }
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Bạn muốn đăng xuất?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show("Bạn chắc chắn muốn đăng xuất?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                Application.Current.Shutdown();
+                LoginWindow login = new LoginWindow();
+                login.Show();
+                this.Close();
             }
         }
     }

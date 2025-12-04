@@ -3,11 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StudentInfoManagement.Models"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1200" 
-             Background="White"
-             PreviewMouseWheel="Child_PreviewMouseWheel">
+             Background="White">
 
     <UserControl.Resources>
         <Style TargetType="TextBox" x:Key="ModalTextBox">
@@ -287,11 +285,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Course Management" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Foreground="#212529"/>
+                    <TextBlock Text="Quản lý môn học" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Foreground="#212529"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Save" Style="{StaticResource BtnSaveStyle}" Width="100" Margin="0,0,10,0"/>
-                        <Button Content="Export CSV" Style="{StaticResource BtnExportStyle}" Width="140" Margin="0,0,10,0" Click="BtnExportCSV_Click"/>
-                        <Button Content="Add New Course" Style="{StaticResource BtnAddStyle}" Width="180" Margin="0,0,10,0" Click="BtnAddCourse_Click"/>
+                        <Button Content="Lưu" Style="{StaticResource BtnSaveStyle}" Width="100" Margin="0,0,10,0"/>
+                        <Button Content="Xuất CSV" Style="{StaticResource BtnExportStyle}" Width="140" Margin="0,0,10,0"/>
+                        <Button Content="Thêm môn học mới" Style="{StaticResource BtnAddStyle}" Width="180" Margin="0,0,10,0"/>
                     </StackPanel>
                 </Grid>
 
@@ -301,7 +299,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Filter Courses" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#343A40"/>
+                        <TextBlock Text="Bộ Lọc" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#343A40"/>
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>
@@ -311,7 +309,7 @@
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Search Course" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <TextBlock Text="Tìm kiếm môn học" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
                                 <Border BorderBrush="#CED4DA" BorderThickness="1" CornerRadius="5" Height="40">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -319,12 +317,12 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="🔍" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#6C757D"/>
-                                        <TextBox Grid.Column="1" Text="Search by code or course name..." VerticalAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="#6C757D"/>
+                                        <TextBox Grid.Column="1" VerticalAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="#6C757D"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="Filter by Semester" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <TextBlock Text="Học kỳ" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
                                 <ComboBox Height="40" SelectedItem="All Semesters" HorizontalAlignment="Stretch">
                                     <ComboBoxItem Content="All Semesters"/>
                                     <ComboBoxItem Content="Semester 1"/>
@@ -332,7 +330,7 @@
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Grid.Column="4">
-                                <TextBlock Text="Filter by Academic Year" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
+                                <TextBlock Text="Khoa" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
                                 <ComboBox Height="40" SelectedItem="All Years" HorizontalAlignment="Stretch">
                                     <ComboBoxItem Content="All Years"/>
                                     <ComboBoxItem Content="Year 1"/>
@@ -351,7 +349,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Courses List (6)" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="#212529"/>
+                        <TextBlock Text="Danh sách môn học" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="#212529"/>
                         <DataGrid x:Name="dgCourses" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal" Background="White" BorderThickness="0" RowHeight="55" HorizontalGridLinesBrush="#F0F0F0" VerticalContentAlignment="Center" SelectionMode="Single" SelectionUnit="FullRow">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -402,49 +400,42 @@
                                 </Style>
                             </DataGrid.RowStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Course Code" Width="120">
+                                <DataGridTemplateColumn Header="Mã môn học" Width="120">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding CourseCode}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Course Name" Width="*" MinWidth="200">
+                                <DataGridTemplateColumn Header="Tên môn học" Width="*" MinWidth="200">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding CourseName}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="#212529"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Credits" Width="80">
+                                <DataGridTemplateColumn Header="Tín chỉ" Width="80">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding Credits}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Department" Width="180">
+                                <DataGridTemplateColumn Header="Khoa" Width="180">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding Department}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Semester" Width="120">
+                                <DataGridTemplateColumn Header="Học kỳ" Width="120">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox Text="{Binding Semester}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Year" Width="80">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBox Text="{Binding Year}" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Center" Foreground="#212529"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Actions" Width="100">
+                                <DataGridTemplateColumn Header="Thao tác" Width="100">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
@@ -459,16 +450,6 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
-                            <DataGrid.ItemsSource>
-                                <x:Array Type="{x:Type local:CourseData}">
-                                    <local:CourseData CourseCode="CS201" CourseName="Data Structures" Credits="4" Department="Computer Science" Semester="Semester 1" Year="Year 2"/>
-                                    <local:CourseData CourseCode="CS301" CourseName="Algorithms" Credits="4" Department="Computer Science" Semester="Semester 2" Year="Year 2"/>
-                                    <local:CourseData CourseCode="BUS101" CourseName="Business Fundamentals" Credits="3" Department="Business" Semester="Semester 1" Year="Year 1"/>
-                                    <local:CourseData CourseCode="BUS201" CourseName="Business Management" Credits="3" Department="Business" Semester="Semester 1" Year="Year 2"/>
-                                    <local:CourseData CourseCode="ENG101" CourseName="Engineering Basics" Credits="4" Department="Engineering" Semester="Semester 1" Year="Year 1"/>
-                                    <local:CourseData CourseCode="ENG201" CourseName="Advanced Engineering" Credits="4" Department="Engineering" Semester="Semester 2" Year="Year 2"/>
-                                </x:Array>
-                            </DataGrid.ItemsSource>
                         </DataGrid>
                     </Grid>
                 </Border>
@@ -476,7 +457,7 @@
         </ScrollViewer>
 
         <Grid x:Name="ModalAddCourse" Visibility="Collapsed">
-            <Border Background="#000000" Opacity="0.5" MouseDown="BtnCloseModal_Click"/>
+            <Border Background="#000000" Opacity="0.5"/>
             <Border Background="White" CornerRadius="10" Width="600" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="5" Opacity="0.2"/>
@@ -490,7 +471,7 @@
 
                     <Grid Grid.Row="0" Margin="20,20,20,10">
                         <TextBlock Text="Add New Course" FontSize="20" FontWeight="Bold" Foreground="#212529"/>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnCloseModal_Click">
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Cursor="Hand">
                             <TextBlock Text="✕" FontSize="18" Foreground="#6C757D"/>
                         </Button>
                     </Grid>
@@ -504,8 +485,7 @@
                                   IsEditable="True"
                                   StaysOpenOnEdit="True"
                                   IsTextSearchEnabled="False"
-                                  Margin="0,0,0,15"
-                                  KeyUp="CbCourseCode_KeyUp"/>
+                                  Margin="0,0,0,15"/>
 
                         <TextBlock Text="Course Name" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
                         <ComboBox x:Name="cbCourseName"
@@ -513,8 +493,7 @@
                                   IsEditable="True"
                                   StaysOpenOnEdit="True"
                                   IsTextSearchEnabled="False"
-                                  Margin="0,0,0,15"
-                                  KeyUp="CbCourseName_KeyUp"/>
+                                  Margin="0,0,0,15"/>
 
                         <TextBlock Text="Credits" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
                         <Border BorderBrush="#CED4DA" BorderThickness="1" CornerRadius="5" Background="White" Height="40" Margin="0,0,0,15">
@@ -529,16 +508,14 @@
                                          Padding="10,0"
                                          BorderThickness="0"
                                          Background="Transparent"
-                                         FontSize="14"
-                                         PreviewTextInput="TxtCredits_PreviewTextInput"
-                                         LostFocus="TxtCredits_LostFocus"/>
+                                         FontSize="14"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <RepeatButton Click="BtnCreditsUp_Click" Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <RepeatButton Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
                                         <RepeatButton.Content>
                                             <Path Data="M0,4 L4,0 L8,4" Stroke="#6C757D" StrokeThickness="1.5" Fill="Transparent"/>
                                         </RepeatButton.Content>
                                     </RepeatButton>
-                                    <RepeatButton Click="BtnCreditsDown_Click" Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <RepeatButton Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
                                         <RepeatButton.Content>
                                             <Path Data="M0,0 L4,4 L8,0" Stroke="#6C757D" StrokeThickness="1.5" Fill="Transparent"/>
                                         </RepeatButton.Content>
@@ -552,15 +529,14 @@
                                   Style="{StaticResource ModalInputComboBox}"
                                   IsEditable="True"
                                   StaysOpenOnEdit="True"
-                                  IsTextSearchEnabled="False"
-                                  KeyUp="CbDepartment_KeyUp"/>
+                                  IsTextSearchEnabled="False"/>
                     </StackPanel>
 
                     <Grid Grid.Row="2" Background="#F8F9FA" Margin="0,10,0,0">
                         <Border CornerRadius="0,0,10,10">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
-                                <Button Content="Cancel" Style="{StaticResource BtnCancelStyle}" Width="100" Margin="0,0,10,0" Click="BtnCloseModal_Click"/>
-                                <Button Content="Save Changes" Width="140" Click="BtnSaveCourse_Click">
+                                <Button Content="Cancel" Style="{StaticResource BtnCancelStyle}" Width="100" Margin="0,0,10,0"/>
+                                <Button Content="Save Changes" Width="140">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="#0D6EFD" CornerRadius="5">

@@ -130,14 +130,6 @@
                 <TextBlock Text="Đăng ký môn học" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
                 <TextBlock Text="Học kỳ 1 - Năm học 2024-2025" FontSize="14" Foreground="{StaticResource TextLight}" Margin="0,5,0,0"/>
             </StackPanel>
-
-            <Border HorizontalAlignment="Right" Background="White" CornerRadius="8"
-                    BorderBrush="#E5E7EB" BorderThickness="1" Padding="15,5">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Đã chọn: " Foreground="{StaticResource TextLight}"/>
-                    <TextBlock Text="9 Tín chỉ" FontWeight="Bold" Foreground="{StaticResource PrimaryBlue}"/>
-                </StackPanel>
-            </Border>
         </Grid>
 
         <!-- Bộ lọc -->
