@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,31 +7,45 @@ namespace StudentInfoManagement.Views
 {
     public partial class StudentsView : UserControl
     {
-        private ObservableCollection<Student> _students;
+        private readonly DatabaseHelper _dbHelper = new DatabaseHelper();
 
         public StudentsView()
         {
             InitializeComponent();
             LoadData();
         }
-
+        private class Student
+                {
+                    public string masv { get; set; }
+                    public string hoten { get; set; }
+                    public string tenlop { get; set; }
+                    public string gioitinh { get; set; }
+                    public string diachi { get; set; }
+                    public string email { get; set; }
+                    public string sdt { get; set; }
+                    public string trangthai { get; set; }
+                }
         private void LoadData()
         {
-            _students = new ObservableCollection<Student>
+            try
             {
-                new Student { masv = "SV001", hoten = "Nguyễn Văn Aa", tenlop = "CTK42", gioitinh = "Nam", diachi = "Hanoi", email = "a@example.com", sdt = "0123456789", trangthai = "Active" },
-                new Student { masv = "SV002", hoten = "Trần Thị B", tenlop = "CTK42", gioitinh = "Nữ", diachi = "Hanoi", email = "b@example.com", sdt = "0987654321", trangthai = "Active" },
-                new Student { masv = "SV003", hoten = "Lê Văn C", tenlop = "CTK43", gioitinh = "Nam", diachi = "HCMC", email = "c@example.com", sdt = "0912345678", trangthai = "Inactive" },
-                new Student { masv = "SV004", hoten = "Phạm Thị D", tenlop = "CTK44", gioitinh = "Nữ", diachi = "Da Nang", email = "d@example.com", sdt = "0909876543", trangthai = "Active" },
-                new Student { masv = "SV005", hoten = "Hoàng Văn E", tenlop = "CTK45", gioitinh = "Nam", diachi = "Hue", email = "e@example.com", sdt = "0934567890", trangthai = "Active" }
-            };
+                // Lấy dữ liệu sinh viên dưới dạng DataTable
+                DataTable studentsTable = _dbHelper.GetStudents();
 
-            StudentsGrid.ItemsSource = _students;
+                // Gán DataTable làm nguồn dữ liệu cho DataGrid
+                // DataGrid trong WPF có thể hiển thị dữ liệu từ DataTable
+                StudentsGrid.ItemsSource = studentsTable.DefaultView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể tải dữ liệu sinh viên: " + ex.Message);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             box.Visibility = Visibility.Visible;
+            ClearInputFields();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -41,19 +56,62 @@ namespace StudentInfoManagement.Views
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             box.Visibility = Visibility.Hidden;
+            ClearInputFields();
+        }
+        private void ClearInputFields()
+        {
+            MasvTextBox.Clear();
+            HotenTextBox.Clear();
+            TenlopTextBox.Clear();
+            GioitinhTextBox.Clear();
+            DiachiTextBox.Clear();
+            EmailTextBox.Clear();
+            SdtTextBox.Clear();
         }
 
-        // Simple student model matching the DataGrid bindings in XAML
-        private class Student
+        private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
-            public string masv { get; set; }
-            public string hoten { get; set; }
-            public string tenlop { get; set; }
-            public string gioitinh { get; set; }
-            public string diachi { get; set; }
-            public string email { get; set; }
-            public string sdt { get; set; }
-            public string trangthai { get; set; }
+            // 1. Lấy dữ liệu từ các TextBox
+            string masv = MasvTextBox.Text;
+            string hoten = HotenTextBox.Text;
+            string tenlop = TenlopTextBox.Text;
+            string gioitinh = GioitinhTextBox.Text;
+            string diachi = DiachiTextBox.Text;
+            string email = EmailTextBox.Text;
+            string sdt = SdtTextBox.Text;
+            string trangthai = "Đang học"; // Mặc định trạng thái là "Đang học"
+
+            // 2. Kiểm tra dữ liệu cần thiết (Ví dụ: Mã SV và Họ tên không được rỗng)
+            if (string.IsNullOrWhiteSpace(masv) || string.IsNullOrWhiteSpace(hoten))
+            {
+                MessageBox.Show("Mã Sinh Viên và Họ tên không được để trống.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 3. Gọi hàm InsertStudent
+            string message;
+            bool success = _dbHelper.InsertStudent(masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
+
+            // 4. Xử lý kết quả
+            if (success)
+            {
+                MessageBox.Show(message, "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Ẩn form và tải lại dữ liệu lưới
+                box.Visibility = Visibility.Hidden;
+                ClearInputFields();
+                LoadData();
+            }
+            else
+            {
+                MessageBox.Show(message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            box.Visibility = Visibility.Hidden;
+            ClearInputFields();
         }
     }
 }
