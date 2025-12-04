@@ -10,12 +10,12 @@
 
         <StackPanel Margin="40,110,40,0" VerticalAlignment="Top">
 
-            <Label Content="Họ và Tên:" Foreground="#555" FontWeight="SemiBold" Margin="0,10,0,0"/>
+            <Label Content="Mã Định Danh" Foreground="#555" FontWeight="SemiBold" Margin="0,10,0,0"/>
             <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
-                <TextBox Name="txtFullname" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
+                <TextBox Name="txtVeriCode" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
             </Border>
 
-            <Label Content="Mã Sinh Viên / Tên Đăng Nhập:" Foreground="#555" FontWeight="SemiBold" Margin="0,15,0,0"/>
+            <Label Content="Tên Đăng Nhập:" Foreground="#555" FontWeight="SemiBold" Margin="0,15,0,0"/>
             <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
                 <TextBox Name="txtUsername" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
             </Border>
