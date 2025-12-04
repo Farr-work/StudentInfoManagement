@@ -3,10 +3,184 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StudentInfoManagement.Views.Student"
         mc:Ignorable="d"
-        Title="StudentClassesView" Height="450" Width="800">
-    <Grid>
-        
+        Title="Đăng ký lớp học"
+        Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+
+        <SolidColorBrush x:Key="PrimaryBlue" Color="#2563EB"/>
+        <SolidColorBrush x:Key="SuccessGreen" Color="#16A34A"/>
+        <SolidColorBrush x:Key="TextDark" Color="#111827"/>
+        <SolidColorBrush x:Key="TextLight" Color="#6B7280"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#D1D5DB"/>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Opacity="0.03" BlurRadius="5" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FilterLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextDark}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <!-- Custom ComboBox -->
+        <Style x:Key="CleanComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+    </Window.Resources>
+
+    <!-- UI chính -->
+    <Grid Background="#F9FAFB" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="5,0,5,15">
+            <StackPanel>
+                <TextBlock Text="Đăng ký lớp học" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
+                <TextBlock Text="Năm học 2024 - 2025" FontSize="14" Foreground="{StaticResource TextLight}" Margin="0,5,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Bộ lọc -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="Tìm kiếm &amp; Lọc" FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Search -->
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Tìm kiếm lớp" Style="{StaticResource FilterLabelStyle}"/>
+                        <Border Height="40" CornerRadius="6" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Background="White">
+                            <Grid>
+                                <TextBlock Text="🔍" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#9CA3AF"/>
+                                <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
+                                         VerticalContentAlignment="Center" Margin="35,0,5,0"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Khoa -->
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Khoa" Style="{StaticResource FilterLabelStyle}"/>
+                        <ComboBox x:Name="cboKhoa" Style="{StaticResource CleanComboBoxStyle}">
+                            <ComboBoxItem Content="Tất cả"/>
+                            <ComboBoxItem Content="CNTT"/>
+                            <ComboBoxItem Content="Kinh tế"/>
+                            <ComboBoxItem Content="Ngoại ngữ"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Lớp hệ -->
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="Lớp / Hệ" Style="{StaticResource FilterLabelStyle}"/>
+                        <ComboBox x:Name="cboHe" Style="{StaticResource CleanComboBoxStyle}">
+                            <ComboBoxItem Content="Tất cả"/>
+                            <ComboBoxItem Content="Đại trà"/>
+                            <ComboBoxItem Content="CLC"/>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+
+        <!-- Danh sách lớp -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- Header table -->
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.8*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="0.8*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Mã lớp" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" Text="Tên lớp" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="2" Text="Thời gian" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="3" Text="Giảng viên" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="4" Text="Sĩ số" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </Grid>
+
+                    <Separator/>
+
+                    <!-- LIST -->
+                    <ItemsControl x:Name="ListLop">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Grid Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.8*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="0.8*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="{Binding MaLop}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding TenLop}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding ThoiGian}"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding GiangVien}"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding SiSo}" HorizontalAlignment="Center"/>
+
+                                    <Button Grid.Column="5"
+                                            Content="{Binding TrangThaiText}"
+                                            Background="{Binding NutColor}"
+                                            Foreground="White"
+                                            Padding="8,3" Width="90"
+                                            HorizontalAlignment="Center"
+                                            />
+                                </Grid>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
     </Grid>
+
 </Window>
+
