@@ -183,88 +183,60 @@
         </Grid>
         <Border Background="White" x:Name="box" BorderBrush="Black" BorderThickness="1" Margin="228,13,182,29" Visibility="Hidden" Width="490" Grid.RowSpan="2" Grid.Row="1" Height="488" >
             <Grid Width="488" Height="486">
-                <Label Content="Add New Student" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
-
                 <Grid Grid.Row="1" Margin="20,10,20,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="MasvTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="-10,61,10,368"/>
 
-                    <TextBox Grid.Column="0"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="Black" BorderThickness="1"
-                            Text="" Margin="-10,61,10,407"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="-10,130,10,306"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="-10,194,253,241"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="-10,61,10,375"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="236,194,10,241"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="-10,265,10,171"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="-10,334,253,102"/>
-                    <TextBox Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Black" BorderThickness="1"
-                        Text="" Margin="236,334,7,102"/>
-                    <Button  Margin="306,402,10,34"
-                         Foreground="Blue">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border BorderThickness="1" BorderBrush="Blue" CornerRadius="5" Background="Blue">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <TextBox x:Name="HotenTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="-10,134,10,302"/>
 
-                                        <TextBlock Text="Save Chances" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
-                                    </StackPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <TextBox x:Name="TenlopTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="-10,202,253,233"/>
+
+                    <TextBox x:Name="GioitinhTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="236,202,10,233"/>
+
+                    <TextBox x:Name="DiachiTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="-10,273,10,163"/>
+
+                    <TextBox x:Name="EmailTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="-10,348,253,88"/>
+
+                    <TextBox x:Name="SdtTextBox" Grid.Column="0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black" BorderThickness="1"
+                     Text="" Margin="236,348,7,88"/>
+
+                    <Button Content="Thêm" Margin="306,402,10,34"
+                    Foreground="Blue"
+                    Click="SaveStudent_Click">
+
                     </Button>
-                    <Button  Margin="200,402,147,34"
-                        Foreground="Blue" Click="Button_Click_2">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border BorderThickness="1" BorderBrush="Black" CornerRadius="5" Background="White">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-
-                                        <TextBlock Text="Cancel" VerticalAlignment="Center" Foreground="Black" FontWeight="Bold"/>
-                                    </StackPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Label Content="Thêm Sinh Viên" HorizontalAlignment="Left" Margin="-10,0,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="14"/>
+                    <Label Content="Mã Sinh Viên:" HorizontalAlignment="Left" Margin="-10,35,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Họ Tên:" HorizontalAlignment="Left" Margin="-10,108,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Tên Lớp:" HorizontalAlignment="Left" Margin="-10,174,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Giới Tính:" HorizontalAlignment="Left" Margin="236,174,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Địa Chỉ:" HorizontalAlignment="Left" Margin="-11,247,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
+                    <Label Content="Số Điện Thoại:" HorizontalAlignment="Left" Margin="-10,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
+                    <Label Content="Trạng Thái:" HorizontalAlignment="Left" Margin="236,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
+                    <Button  Content="Hủy bỏ" Margin="164,402,152,34"
+                        Foreground="Blue" Click="Button_Click_3"/>
 
                 </Grid>
-                <Label Content="Student ID:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Full Name:" HorizontalAlignment="Left" Margin="10,113,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Class:" HorizontalAlignment="Left" Margin="13,179,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Gender:" HorizontalAlignment="Left" Margin="254,179,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Address:" HorizontalAlignment="Left" Margin="13,250,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Phone:" HorizontalAlignment="Left" Margin="13,317,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="Date:" HorizontalAlignment="Left" Margin="254,317,0,0" VerticalAlignment="Top" FontSize="14"/>
             </Grid>
-
         </Border>
-
     </Grid>
 </UserControl>
