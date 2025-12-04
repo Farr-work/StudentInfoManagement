@@ -41,10 +41,84 @@
         <Style x:Key="CleanComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="templateBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="30"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentPresenter Grid.Column="0" 
+                                                      IsHitTestVisible="False" 
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Left"
+                                                      Margin="{TemplateBinding Padding}"/>
+
+                                    <ToggleButton Grid.Column="1" 
+                                                  Focusable="false"
+                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                  ClickMode="Press">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent">
+                                                    <Path Data="M0,0 L5,5 L10,0" 
+                                                          Stroke="#6B7280" 
+                                                          StrokeThickness="1.5"
+                                                          HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+                            </Border>
+
+                            <Popup x:Name="PART_Popup" 
+                                   AllowsTransparency="True" 
+                                   IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                   Placement="Bottom"
+                                   VerticalOffset="2">
+                                <Border x:Name="DropDownBorder" 
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Background="White"
+                                        BorderBrush="#D1D5DB"
+                                        BorderThickness="1"
+                                        CornerRadius="6">
+                                    <ScrollViewer Margin="2">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="templateBorder" Property="BorderBrush" Value="#9CA3AF"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="templateBorder" Property="BorderBrush" Value="#2563EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
     </Window.Resources>
@@ -94,12 +168,6 @@
                     <!-- Khoa -->
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Khoa" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox x:Name="cboKhoa" Style="{StaticResource CleanComboBoxStyle}">
-                            <ComboBoxItem Content="Tất cả"/>
-                            <ComboBoxItem Content="CNTT"/>
-                            <ComboBoxItem Content="Kinh tế"/>
-                            <ComboBoxItem Content="Ngoại ngữ"/>
-                        </ComboBox>
                     </StackPanel>
 
                     <!-- Lớp hệ -->
@@ -126,18 +194,18 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.8*"/>
                             <ColumnDefinition Width="2*"/>
+                            
                             <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="0.8*"/>
+                       
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Mã lớp" FontWeight="Bold"/>
                         <TextBlock Grid.Column="1" Text="Tên lớp" FontWeight="Bold"/>
-                        <TextBlock Grid.Column="2" Text="Thời gian" FontWeight="Bold"/>
-                        <TextBlock Grid.Column="3" Text="Giảng viên" FontWeight="Bold"/>
-                        <TextBlock Grid.Column="4" Text="Sĩ số" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" HorizontalAlignment="Center"/>
+        
+                        <TextBlock Grid.Column="2" Text="Giảng viên" FontWeight="Bold"/>
+                        
+                        <TextBlock Grid.Column="3" Text="Thao tác" FontWeight="Bold" HorizontalAlignment="Center"/>
                     </Grid>
 
                     <Separator/>
@@ -179,6 +247,12 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
+        <ComboBox Style="{StaticResource CleanComboBoxStyle}" Margin="530,81,286,42" Grid.Row="1">
+            <ComboBoxItem Content="Tất cả các khoa"/>
+            <ComboBoxItem Content="CNTT"/>
+            <ComboBoxItem Content="Kinh tế"/>
+            <ComboBoxItem Content="Ngoại ngữ"/>
+        </ComboBox>
 
     </Grid>
 
