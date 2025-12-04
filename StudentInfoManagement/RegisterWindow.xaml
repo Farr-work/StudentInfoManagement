@@ -1,0 +1,83 @@
+﻿<Window x:Class="StudentInfoManagement.RegisterWindow"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         
+         mc:Ignorable="d"
+         Title="Đăng Ký Tài Khoản" Height="700" Width="448"
+         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Grid Height="613" Width="448">
+
+        <Label Content="Tạo tài khoản mới" 
+            HorizontalAlignment="Center" Margin="0,30,0,0" VerticalAlignment="Top" 
+            FontWeight="Bold" FontSize="26" Foreground="#333"/>
+
+        <Label Content="Điền thông tin bên dưới để bắt đầu" 
+            HorizontalAlignment="Center" Margin="0,70,0,0" VerticalAlignment="Top" 
+            FontSize="14" Foreground="Gray"/>
+
+        <StackPanel Margin="40,110,40,0" VerticalAlignment="Top">
+
+            <Label Content="Họ và Tên:" Foreground="#555" FontWeight="SemiBold" Margin="0,10,0,0"/>
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
+                <TextBox Name="txtFullname" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
+            </Border>
+
+            <Label Content="Mã Sinh Viên / Tên Đăng Nhập:" Foreground="#555" FontWeight="SemiBold" Margin="0,15,0,0"/>
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
+                <TextBox Name="txtUsername" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
+            </Border>
+
+            <Label Content="Mật Khẩu:" Foreground="#555" FontWeight="SemiBold" Margin="0,15,0,0"/>
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
+                <PasswordBox Name="txtPassword" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
+            </Border>
+
+            <Label Content="Xác Nhận Mật Khẩu:" Foreground="#555" FontWeight="SemiBold" Margin="0,15,0,0"/>
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Height="45" Margin="0,5,0,0">
+                <PasswordBox Name="txtConfirmPassword" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="10,0" FontSize="14"/>
+            </Border>
+
+            <Button Name="btnRegister" 
+                 Content="ĐĂNG KÝ NGAY"
+                 Height="50"
+                 Margin="0,30,0,0"
+                 BorderThickness="0"
+                 Cursor="Hand" Click="btnRegister_Click"
+                 >
+
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#FFA084EF"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <Border CornerRadius="25" Background="#FFA084EF" Margin="0,3,0,-3" Opacity="0.3">
+                                            <Border.Effect>
+                                                <BlurEffect Radius="6"/>
+                                            </Border.Effect>
+                                        </Border>
+                                        <Border CornerRadius="25" Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <TextBlock Text="Đã có tài khoản? " Foreground="Gray"/>
+                <TextBlock Text="Đăng nhập" Foreground="#FFA084EF" FontWeight="Bold" Cursor="Hand" />
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>

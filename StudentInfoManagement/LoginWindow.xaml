@@ -5,8 +5,88 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StudentInfoManagement"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="LoginWindow" Height="450" Width="450">
+
+    <Grid Background="White" Margin="0,0,0,-6">
+
+        <Label Content="Chào mừng trở lại" 
+               HorizontalAlignment="Left" Margin="25,30,0,0" VerticalAlignment="Top" 
+               FontWeight="Bold" FontSize="26" Foreground="#333"/>
+
+        <Label Content="Đăng nhập vào tài khoản để tiếp tục" 
+               HorizontalAlignment="Left" Margin="28,70,0,0" VerticalAlignment="Top" 
+               FontSize="14" Foreground="Gray"/>
+
+        <Grid Margin="25,120,25,0" VerticalAlignment="Top">
+            <Label Content="Mã Sinh Viên / Tên Đăng Nhập:" Foreground="#555" FontWeight="SemiBold"/>
+
+            <Border BorderBrush="#DDD" BorderThickness="1" Margin="0,30,0,0" CornerRadius="8" Height="45">
+                <TextBox Name="txtUsername" 
+                         VerticalContentAlignment="Center" 
+                         BorderThickness="0" 
+                         Background="Transparent"
+                         Padding="10,0"
+                         FontSize="14"
+                         TextWrapping="NoWrap"/>
+            </Border>
+        </Grid>
+
+        <Grid Margin="25,200,25,0" VerticalAlignment="Top">
+            <Label Content="Mật Khẩu:" Foreground="#555" FontWeight="SemiBold"/>
+
+            <Border BorderBrush="#DDD" BorderThickness="1" Margin="0,30,0,0" CornerRadius="8" Height="45">
+                <PasswordBox Name="txtPassword" 
+                             VerticalContentAlignment="Center" 
+                             BorderThickness="0" 
+                             Background="Transparent"
+                             Padding="10,0"
+                             FontSize="14"/>
+            </Border>
+        </Grid>
+
+        <Button Name="LoginButton" 
+        Content="ĐĂNG NHẬP"
+        Margin="25,300,25,0" 
+        VerticalAlignment="Top"
+        Height="50"
+        BorderThickness="0"
+        Cursor="Hand"
+      >
+
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#FFA084EF"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border CornerRadius="25" Background="#FFA084EF" Margin="0,3,0,-3" Opacity="0.3">
+                                        <Border.Effect>
+                                            <BlurEffect Radius="6"/>
+                                        </Border.Effect>
+                                    </Border>
+
+                                    <Border CornerRadius="25" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <TextBlock x:Name="formdki" Text="Bạn chưa có tài khoản?" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,370,0,0" 
+                   VerticalAlignment="Top"
+                   Foreground="#FFA084EF"
+                   Cursor="Hand"
+                   TextDecorations="Underline"/>
+
     </Grid>
 </Window>
