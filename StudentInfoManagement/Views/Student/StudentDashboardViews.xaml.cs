@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StudentInfoManagement.Views
+namespace StudentInfoManagement.Views.Student
 {
     /// <summary>
     /// Interaction logic for DashboardView.xaml
     /// </summary>
-    public partial class StudentDashboardView : UserControl
+    public partial class StudentDashboardViews : UserControl
     {
-        public StudentDashboardView()
+        public StudentDashboardViews()
         {
             InitializeComponent();
         }

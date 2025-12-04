@@ -1,4 +1,5 @@
 ﻿using StudentInfoManagement.Views;
+using StudentInfoManagement.Views.Student;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -32,7 +33,7 @@ namespace StudentInfoManagement
             switch (viewName)
             {
                 case "StudentDashboard":
-                    MainContent.Content = new StudentDashboardView();
+                    MainContent.Content = new StudentDashboardViews();
                     // Tạm thời dùng TextBlock để test nếu bạn chưa tạo UserControl
                     //MainContent.Content = CreatePlaceholder("Dashboard View");
                     break;
@@ -42,7 +43,7 @@ namespace StudentInfoManagement
                     break;
 
                 case "StudentClasses":
-                    MainContent.Content = CreatePlaceholder("Student Portal View");
+                    MainContent.Content = new StudentClassesView();
                     break;
 
                 case "Settings":
