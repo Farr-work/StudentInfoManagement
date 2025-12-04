@@ -17,7 +17,7 @@ namespace StudentInfoManagement.Views.Student
     /// <summary>
     /// Interaction logic for StudentCoursesView.xaml
     /// </summary>
-    public partial class StudentCoursesView : Window
+    public partial class StudentCoursesView : UserControl
     {
         public StudentCoursesView()
         {
