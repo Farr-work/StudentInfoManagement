@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using Microsoft.Data.SqlClient; // Thư viện mới
+using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -8,8 +8,7 @@ namespace StudentInfoManagement
 {
     public class DatabaseHelper
     {
-        // LƯU Ý: Thay đổi Server Name cho phù hợp với máy bạn
-        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@";
+        private readonly string _connectionString = "Data Source=.;Initial Catalog=StudentManagementDB;Integrated Security=True;TrustServerCertificate=True";
 
         public string HashPassword(string password)
         {
@@ -25,6 +24,7 @@ namespace StudentInfoManagement
             }
         }
 
+        // Đăng nhập (Giữ nguyên)
         public string AuthenticateUser(string username, string password)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -40,10 +40,7 @@ namespace StudentInfoManagement
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            if (reader.Read())
-                            {
-                                return reader["RoleName"].ToString();
-                            }
+                            if (reader.Read()) return reader["RoleName"].ToString();
                         }
                     }
                 }
@@ -52,17 +49,19 @@ namespace StudentInfoManagement
             return null;
         }
 
-        public bool RegisterUser(string fullName, string username, string password, out string message)
+        // Đăng ký ADMIN (Logic mới)
+        public bool RegisterAdmin(string username, string password, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 try
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("sp_Register", conn))
+                    // Gọi thủ tục sp_RegisterAdmin thay vì sp_Register cũ
+                    using (SqlCommand cmd = new SqlCommand("sp_RegisterAdmin", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@FullName", fullName));
+                        // Không cần truyền FullName nữa vì form đã bỏ
                         cmd.Parameters.Add(new SqlParameter("@Username", username));
                         cmd.Parameters.Add(new SqlParameter("@PasswordHash", HashPassword(password)));
 
