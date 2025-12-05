@@ -145,29 +145,22 @@
                             <Grid>
                                 <TextBlock Text="🔍" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#9CA3AF"/>
                                 <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
-                                         VerticalContentAlignment="Center" Margin="35,0,5,0"/>
+                                         VerticalContentAlignment="Center" Margin="35,0,5,0" TextChanged="txtSearch_TextChanged"/>
                             </Grid>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Lọc theo Khoa" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox Style="{StaticResource CleanComboBoxStyle}">
-                            <ComboBoxItem Content="Tất cả các khoa"/>
+                        <ComboBox x:Name="cboDepartmentFilter" Style="{StaticResource CleanComboBoxStyle}" SelectionChanged="cboDepartmentFilter_SelectionChanged" >
+                            <ComboBoxItem Content="Tất cả các khoa" IsSelected="True"/>
                             <ComboBoxItem Content="CNTT"/>
-                            <ComboBoxItem Content="Kinh tế"/>
-                            <ComboBoxItem Content="Ngoại ngữ"/>
+                            <ComboBoxItem Content="KT"/>
+                            <ComboBoxItem Content="NN"/>
                         </ComboBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="4">
-                        <TextBlock Text="Lọc theo Lớp/Hệ" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox Style="{StaticResource CleanComboBoxStyle}">
-                            <ComboBoxItem Content="Tất cả"/>
-                            <ComboBoxItem Content="Đại trà"/>
-                            <ComboBoxItem Content="CLC"/>
-                        </ComboBox>
-                    </StackPanel>
+                    <StackPanel Grid.Column="4"/>
 
                 </Grid>
 
@@ -196,7 +189,7 @@
                     <TextBlock Grid.Column="1" Text="Tên môn học" FontWeight="Bold"/>
                     <TextBlock Grid.Column="2" Text="TC" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="3" Text="Giảng viên" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="4" Text="Sĩ số" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="4" Text="Khoa" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </Grid>
 
@@ -220,7 +213,7 @@
                                     <TextBlock Grid.Column="1" Text="{Binding TenMonHoc}"/>
                                     <TextBlock Grid.Column="2" Text="{Binding TinChi}" HorizontalAlignment="Center"/>
                                     <TextBlock Grid.Column="3" Text="{Binding GiangVien}"/>
-                                    <TextBlock Grid.Column="4" Text="{Binding SiSo}" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding Khoa}" HorizontalAlignment="Center"/>
 
                                     <Button Grid.Column="5"
                                             Content="Đăng ký"
