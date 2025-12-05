@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="900" Background="White">
+             d:DesignHeight="600" Background="White" Width="1128">
 
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBox}">
@@ -39,7 +39,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Quản Lý Sinh Viên1"
+        <TextBlock Text="Quản Lý Sinh Viên"
                    FontSize="24"
                    VerticalAlignment="Top" Margin="20,28,0,0" Height="42" FontWeight="Bold"/>
 
@@ -55,14 +55,12 @@
                      VerticalContentAlignment="Center"
                      BorderBrush="Black" BorderThickness="1" Margin="0,8,0,4"/>
 
-            <Button Grid.Column="1"
-                    Width="80" Margin="10,10,0,4"
-                    Foreground="Green">
+            <Button Grid.Column="1" Width="80" Margin="10,10,0,4" Foreground="Green">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="1" BorderBrush="Green" CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <Image Source="/icon/iconsave.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="💾" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Lưu" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
@@ -70,14 +68,12 @@
                 </Button.Template>
             </Button>
 
-            <Button Grid.Column="2" 
-                    Width="100" Margin="10,10,0,4"
-                    Foreground="#2563EB">
+            <Button Grid.Column="2" Width="100" Margin="10,10,0,4" Foreground="#2563EB" Click="Button_Click_1">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="1" BorderBrush="#2563EB" CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <Image Source="/icon/iconimport.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="📥" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Xuất CSV" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
@@ -85,14 +81,12 @@
                 </Button.Template>
             </Button>
 
-            <Button Grid.Column="3" Content="Add New Students"
-                    Width="130" Margin="10,10,0,4"
-                    Foreground="White" Click="Button_Click">
+            <Button Grid.Column="3" Content="Add New Students" Width="130" Margin="10,10,0,4" Foreground="White" Click="Button_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="1" Background="#2563EB" BorderBrush="#2563EB" CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <Image Source="/icon/iconadd.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                <TextBlock Text="➕" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Thêm Sinh Viên" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
@@ -107,12 +101,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Label Content="Danh Sách Sinh Viên"
-                   FontSize="20" FontWeight="Bold"
-                   Margin="0,0,0,10"/>
+            <Label Content="Danh Sách Sinh Viên" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
-            <Border Grid.Row="1" BorderBrush="Gray" 
-                    BorderThickness="2" CornerRadius="10" Margin="0">
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="2" CornerRadius="10" Margin="0">
                 <DataGrid x:Name="StudentsGrid"
                           Grid.Row="1"
                           AutoGenerateColumns="False"
@@ -130,20 +121,17 @@
                             <Setter Property="Background" Value="White"/>
                             <Setter Property="Padding" Value="10"/>
                             <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="Margin" Value="0"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                             <Setter Property="BorderBrush" Value="#E5E7EB"/>
                         </Style>
-
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="BorderThickness" Value="0"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Padding="{TemplateBinding Padding}"
-                                                Background="{TemplateBinding Background}">
+                                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
                                             <ContentPresenter VerticalAlignment="Center"/>
                                         </Border>
                                     </ControlTemplate>
@@ -156,92 +144,76 @@
                         <DataGridTextColumn Header="Mã Sinh Viên" Binding="{Binding masv}" Width="100"/>
                         <DataGridTextColumn Header="Họ tên" Binding="{Binding hoten}" Width="200"/>
                         <DataGridTextColumn Header="Tên Lớp" Binding="{Binding tenlop}" Width="100"/>
-                        <DataGridTextColumn Header="Giới Tính" Binding="{Binding gioitinh}" Width="100"/>
+                        <DataGridTextColumn Header="Giới Tính" Binding="{Binding gioitinh}" Width="80"/>
                         <DataGridTextColumn Header="Địa chỉ" Binding="{Binding diachi}" Width="150"/>
-                        <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="120"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="150"/>
                         <DataGridTextColumn Header="Số Điện Thoại" Binding="{Binding sdt}" Width="100"/>
-                        <DataGridTextColumn Header="Trạng Thái" Binding="{Binding trangthai}" Width="110"/>
+                        <DataGridTextColumn Header="Trạng Thái" Binding="{Binding trangthai}" Width="100"/>
 
-                        <!-- Cột Action đã chỉnh sửa -->
                         <DataGridTemplateColumn Header="Thao Tác" Width="100" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                                        <!-- Nút Sửa: Bỏ StackPanel bên trong, thêm Margin -->
-                                        <Button Click="EditStudent_Click" Margin="0,0" VerticalAlignment="Center" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                                            <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" Foreground="Black" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Click="EditStudent_Click" Margin="0,0,10,0" ToolTip="Sửa" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                            <TextBlock Text="✏️" FontSize="16"/>
                                         </Button>
-
-                                        <!-- Nút Xóa: Bỏ StackPanel bên trong, thêm Margin -->
-                                        <Button Click="DeleteStudent_Click" Margin="0,0" VerticalAlignment="Center" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Foreground="Red" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Click="DeleteStudent_Click" Margin="0,0" ToolTip="Xóa" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                            <TextBlock Text="🗑️" FontSize="16" Foreground="Red"/>
                                         </Button>
-
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
-
                 </DataGrid>
             </Border>
         </Grid>
-        <Border Background="White" x:Name="box" BorderBrush="Black" BorderThickness="1" Margin="228,13,182,29" Visibility="Hidden" Width="490" Grid.RowSpan="2" Grid.Row="1" Height="488" >
-            <Grid Width="488" Height="486">
-                <Grid Grid.Row="1" Margin="20,10,20,0">
-                    <TextBox x:Name="MasvTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="-10,61,10,368"/>
 
-                    <TextBox x:Name="HotenTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="-10,134,10,302"/>
+        <Border Background="White" x:Name="box" BorderBrush="Black" BorderThickness="1" Margin="0" Visibility="Hidden" Width="490" Grid.RowSpan="3" Height="500" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid Width="488" Height="490">
+                <Label Content="Thông Tin Sinh Viên" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="18"/>
 
-                    <TextBox x:Name="TenlopTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="-10,202,253,233"/>
+                <Grid Margin="20,50,20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="60"/>
+                    </Grid.RowDefinitions>
 
-                    <TextBox x:Name="GioitinhTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="236,202,10,233"/>
+                    <Label Content="Mã Sinh Viên:" Grid.Row="0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="MasvTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
-                    <TextBox x:Name="DiachiTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="-10,273,10,163"/>
+                    <Label Content="Họ Tên:" Grid.Row="1" VerticalAlignment="Center"/>
+                    <TextBox x:Name="HotenTextBox" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
-                    <TextBox x:Name="EmailTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="-10,348,253,88"/>
+                    <Label Content="Tên Lớp:" Grid.Row="2" VerticalAlignment="Center"/>
+                    <TextBox x:Name="TenlopTextBox" Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
-                    <TextBox x:Name="SdtTextBox" Grid.Column="0"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black" BorderThickness="1"
-                     Text="" Margin="236,348,7,88"/>
+                    <Label Content="Giới Tính:" Grid.Row="3" VerticalAlignment="Center"/>
+                    <TextBox x:Name="GioitinhTextBox" Grid.Row="3" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
-                    <Button Content="Thêm" Margin="306,402,10,34"
-                     Foreground="Blue"
-                     Click="SaveStudent_Click">
+                    <Label Content="Địa Chỉ:" Grid.Row="4" VerticalAlignment="Center"/>
+                    <TextBox x:Name="DiachiTextBox" Grid.Row="4" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
-                    </Button>
-                    <Label Content="Thêm Sinh Viên" HorizontalAlignment="Left" Margin="-10,0,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="14"/>
-                    <Label Content="Mã Sinh Viên:" HorizontalAlignment="Left" Margin="-10,35,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Họ Tên:" HorizontalAlignment="Left" Margin="-10,108,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Tên Lớp:" HorizontalAlignment="Left" Margin="-10,174,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Giới Tính:" HorizontalAlignment="Left" Margin="236,174,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Giới Tính:" HorizontalAlignment="Left" Margin="236,174,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Địa Chỉ:" HorizontalAlignment="Left" Margin="-11,247,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
-                    <Label Content="Số Điện Thoại:" HorizontalAlignment="Left" Margin="-10,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
-                    <Label Content="Trạng Thái:" HorizontalAlignment="Left" Margin="236,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
-                    <Button Content="Hủy bỏ" Margin="164,402,152,34"
-                         Foreground="Blue" Click="Button_Click_3"/>
+                    <Label Content="Email:" Grid.Row="5" VerticalAlignment="Center"/>
+                    <TextBox x:Name="EmailTextBox" Grid.Row="5" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
 
+                    <Label Content="Số Điện Thoại:" Grid.Row="6" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SdtTextBox" Grid.Row="6" Grid.Column="1" VerticalContentAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="30"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Content="Hủy bỏ" Width="80" Height="30" Margin="0,0,10,0" Foreground="Blue" Click="Button_Click_3"/>
+                        <Button Content="Lưu" Width="80" Height="30" Foreground="White" Background="Blue" Click="SaveStudent_Click"/>
+                    </StackPanel>
                 </Grid>
             </Grid>
         </Border>

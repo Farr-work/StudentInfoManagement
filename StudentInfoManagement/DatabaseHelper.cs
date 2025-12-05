@@ -1,19 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
-using System.Windows;
-// Đã xóa System.Security.Cryptography vì không dùng nữa
 
 namespace StudentInfoManagement
 {
     public class DatabaseHelper
     {
-        // Chuỗi kết nối của bạn (SmarterASP.NET)
+        // Chuỗi kết nối chuẩn đồng bộ cho toàn project
         private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
-        // --- 1. XỬ LÝ ĐĂNG NHẬP & TÀI KHOẢN (AUTH) ---
-
-        // Đăng nhập: Truyền password thô vào Stored Procedure
+        // --- 1. XỬ LÝ ĐĂNG NHẬP (AUTH) ---
         public string AuthenticateUser(string username, string password)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -25,8 +21,7 @@ namespace StudentInfoManagement
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@Username", username));
-
-                        // QUAN TRỌNG: Truyền trực tiếp password, không Hash
+                        // Truyền password thô
                         cmd.Parameters.Add(new SqlParameter("@Password", password));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -40,7 +35,7 @@ namespace StudentInfoManagement
             return null;
         }
 
-        // Đăng ký ADMIN: Truyền password thô
+        // --- 2. ĐĂNG KÝ ADMIN ---
         public bool RegisterAdmin(string username, string password, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -52,8 +47,7 @@ namespace StudentInfoManagement
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@Username", username));
-
-                        // QUAN TRỌNG: Truyền trực tiếp password, không Hash
+                        // Truyền password thô
                         cmd.Parameters.Add(new SqlParameter("@Password", password));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -69,18 +63,12 @@ namespace StudentInfoManagement
                 }
                 catch (Exception ex)
                 {
-                    message = "Lỗi: " + ex.Message;
+                    message = "Lỗi kết nối: " + ex.Message;
                     return false;
                 }
             }
             message = "Lỗi không xác định";
             return false;
         }
-
-        // --- 2. XỬ LÝ DỮ LIỆU SINH VIÊN (DATA) ---
-
-        
-
-    
     }
 }
