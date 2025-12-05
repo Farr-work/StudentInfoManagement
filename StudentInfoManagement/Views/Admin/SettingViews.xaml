@@ -103,7 +103,7 @@
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <TextBlock Text="Quyền hạn:" Foreground="#6B7280"/>
-                    <TextBlock x:Name="txtPermissionLabel" Text="Toàn quyền" Foreground="#111827" HorizontalAlignment="Right"/>
+                    <TextBlock x:Name="txtPermissionLabel" Text="Admin" Foreground="#111827" HorizontalAlignment="Right"/>
                 </Grid>
             </StackPanel>
         </Border>
@@ -114,14 +114,19 @@
                 <Border Style="{StaticResource CardStyle}" Padding="25" Margin="0,0,0,20">
                     <StackPanel>
                         <Grid Margin="0,0,0,20">
-                            <StackPanel>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
                                 <TextBlock Text="Thông tin hồ sơ" FontSize="18" FontWeight="Bold" Margin="0,0,0,5"/>
                                 <TextBlock x:Name="txtInfoSubLabel" Text="Thông tin chi tiết của tài khoản." FontSize="14" Foreground="#6B7280"/>
                             </StackPanel>
 
-                            <Button x:Name="btnSaveInfo" Content="Lưu Thay Đổi" Click="BtnSaveInfo_Click"
-                                    HorizontalAlignment="Right" VerticalAlignment="Top" Width="120" Height="40"
-                                    Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
+                            <Button x:Name="btnSaveInfo" Grid.Column="1" Content="Lưu Thay Đổi" Click="BtnSaveInfo_Click"
+                            Width="120" Height="40"
+                            Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="bdr" CornerRadius="6" Background="{TemplateBinding Background}">
@@ -139,9 +144,9 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -150,40 +155,30 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,15">
-                                <TextBlock Text="Mã Định Danh (ID)" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtID" Style="{StaticResource InputStyle}"/>
+                                <TextBlock Text="Mã Giảng Viên (ID)" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtID" Style="{StaticResource InputStyle}" IsReadOnly="True" Background="#F3F4F6" Foreground="#6B7280"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,15">
-                                <TextBlock Text="Lớp / Phòng Ban" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtClassDept" Style="{StaticResource InputStyle}"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,15">
                                 <TextBlock Text="Họ và Tên" Style="{StaticResource LabelStyle}"/>
                                 <TextBox x:Name="txtFullName" Style="{StaticResource InputStyle}"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,15">
-                                <TextBlock Text="Ngày sinh" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtDob" Style="{StaticResource InputStyle}"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,15">
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,15">
                                 <TextBlock Text="Email" Style="{StaticResource LabelStyle}"/>
                                 <TextBox x:Name="txtEmail" Style="{StaticResource InputStyle}"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,15">
+                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,15">
                                 <TextBlock Text="Số điện thoại" Style="{StaticResource LabelStyle}"/>
                                 <TextBox x:Name="txtPhone" Style="{StaticResource InputStyle}"/>
                             </StackPanel>
-                        </Grid>
 
-                        <StackPanel Margin="0,0,0,5">
-                            <TextBlock Text="Địa chỉ" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="txtAddress" Style="{StaticResource InputStyle}"/>
-                        </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
+                                <TextBlock Text="Địa chỉ thường trú" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtAddress" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Border>
 
@@ -195,7 +190,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="30"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
@@ -207,11 +202,11 @@
                                 <PasswordBox x:Name="pbNewPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
 
                                 <TextBlock Text="Xác nhận mật khẩu mới" Style="{StaticResource LabelStyle}"/>
-                                <PasswordBox x:Name="pbConfirmPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
+                                <PasswordBox x:Name="pbConfirmPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,20"/>
 
                                 <Button Content="Đổi Mật Khẩu" Click="BtnChangePass_Click"
-                                        HorizontalAlignment="Left" Width="120" Height="40"
-                                        Background="White" Foreground="#DC2626" FontWeight="SemiBold" BorderThickness="1" BorderBrush="#DC2626" Cursor="Hand">
+                                HorizontalAlignment="Left" Width="140" Height="40"
+                                Background="White" Foreground="#DC2626" FontWeight="SemiBold" BorderThickness="1" BorderBrush="#DC2626" Cursor="Hand">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="bdr" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
@@ -227,11 +222,26 @@
                                 </Button>
                             </StackPanel>
 
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0">
-                                <TextBlock Text="Yêu cầu mật khẩu:" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <TextBlock Text="• Tối thiểu 6 ký tự" Foreground="#6B7280" Margin="0,2"/>
-                                <TextBlock Text="• Khác với mật khẩu cũ" Foreground="#6B7280" Margin="0,2"/>
-                            </StackPanel>
+                            <Border Grid.Column="2" Background="#F9FAFB" CornerRadius="8" Padding="20" VerticalAlignment="Top">
+                                <StackPanel>
+                                    <TextBlock Text="Lưu ý mật khẩu:" FontWeight="Bold" Margin="0,0,0,10" Foreground="#374151"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <TextBlock Text="✓" Foreground="#16A34A" Margin="0,0,8,0" FontWeight="Bold"/>
+                                        <TextBlock Text="Tối thiểu 6 ký tự" Foreground="#4B5563"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <TextBlock Text="✓" Foreground="#16A34A" Margin="0,0,8,0" FontWeight="Bold"/>
+                                        <TextBlock Text="Có chứa chữ và số" Foreground="#4B5563"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="!" Foreground="#D97706" Margin="0,0,10,0" FontWeight="Bold"/>
+                                        <TextBlock Text="Khác với mật khẩu gần nhất" Foreground="#4B5563"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </Grid>
                     </StackPanel>
                 </Border>

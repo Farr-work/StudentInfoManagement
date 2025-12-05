@@ -4,10 +4,9 @@ using System.Data;
 
 namespace StudentInfoManagement
 {
-    // --- GLOBAL CONFIG GIỐNG CODE TRƯỚC ---
+    // --- GLOBAL CONFIG (Giữ lại để tránh lỗi các file khác đang dùng) ---
     public static class GlobalConfig
     {
-        // Lưu mã sinh viên sau khi đăng nhập
         public static string CurrentUserID { get; set; } = string.Empty;
     }
 
@@ -18,16 +17,21 @@ namespace StudentInfoManagement
             "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
         // --- 1. XỬ LÝ ĐĂNG NHẬP (AUTH) ---
-        public string AuthenticateUser(string username, string password)
+        // SỬA: Thêm tham số "out string userId" để lấy ID ra ngoài
+        public string AuthenticateUser(string username, string password, out string userId)
         {
+            userId = ""; // Mặc định là rỗng
+            string role = ""; // Mặc định chưa có quyền
+
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 try
                 {
                     conn.Open();
 
+                    // SỬA SQL: Lấy cả RoleName VÀ UserID (Giả sử cột khóa chính tên là UserID)
                     string sql = @"
-                        SELECT r.RoleName 
+                        SELECT r.RoleName, u.UserID 
                         FROM Users u
                         JOIN Roles r ON u.RoleID = r.RoleID
                         WHERE u.Username = @Username AND u.Password = @Password";
@@ -37,15 +41,21 @@ namespace StudentInfoManagement
                         cmd.Parameters.AddWithValue("@Username", username);
                         cmd.Parameters.AddWithValue("@Password", password);
 
-                        object result = cmd.ExecuteScalar();
-
-                        // Nếu login thành công
-                        if (result != null)
+                        // SỬA: Dùng ExecuteReader thay vì ExecuteScalar để đọc nhiều cột
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            // GIỐNG CODE TRƯỚC: LƯU MÃ SV VÀO GLOBAL
-                            GlobalConfig.CurrentUserID = username;
+                            if (reader.Read())
+                            {
+                                // 1. Lấy Role
+                                role = reader["RoleName"].ToString();
 
-                            return result.ToString(); // Trả về RoleName
+                                // 2. Lấy ID từ Database
+                                // LƯU Ý: Cột trong SQL phải tên là 'UserID'. Nếu là 'Id' thì sửa dòng dưới thành ["Id"]
+                                userId = reader["UserID"].ToString();
+
+                                // Cập nhật luôn GlobalConfig cũ cho an toàn (tương thích ngược)
+                                GlobalConfig.CurrentUserID = userId;
+                            }
                         }
                     }
                 }
@@ -54,10 +64,11 @@ namespace StudentInfoManagement
                     throw;
                 }
             }
-            return null;
+
+            return role; // Trả về Role (Admin/Student) hoặc chuỗi rỗng nếu thất bại
         }
 
-        // --- 2. GIỐNG CODE TRƯỚC: LẤY THÔNG TIN SINH VIÊN ---
+        // --- 2. LẤY THÔNG TIN SINH VIÊN (GIỮ NGUYÊN) ---
         public DataTable GetStudentInfo(string studentID)
         {
             string sqlQuery = @"
@@ -142,7 +153,7 @@ namespace StudentInfoManagement
             return false;
         }
 
-        // --- HÀM PHỤ: ĐẢM BẢO ROLE TỒN TẠI ---
+        // --- HÀM PHỤ: ĐẢM BẢO ROLE TỒN TẠI (GIỮ NGUYÊN) ---
         private void EnsureRoleExists(SqlConnection conn, int roleId, string roleName)
         {
             string sqlCheck = "SELECT COUNT(*) FROM Roles WHERE RoleID = @ID";

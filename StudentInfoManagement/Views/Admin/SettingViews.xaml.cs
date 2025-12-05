@@ -1,96 +1,130 @@
-﻿using System.Windows;
+﻿using Microsoft.Data.SqlClient;
+using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace StudentInfoManagement.Views
 {
     public partial class SettingViews : UserControl
     {
-        // Biến lưu vai trò hiện tại ("Admin" hoặc "Student")
-        private string _userRole;
-
-        public SettingViews(string role = "Admin") // Mặc định là Admin nếu không truyền gì
+        public SettingViews()
         {
             InitializeComponent();
-            _userRole = role;
-
-            // Thiết lập giao diện dựa trên vai trò
-            SetupViewByRole();
+            LoadAdminProfile();
         }
 
-        private void SetupViewByRole()
+        private void LoadAdminProfile()
         {
-            if (_userRole == "Admin")
-            {
-                // === CẤU HÌNH CHO ADMIN ===
-                // 1. Giao diện bên trái
-                txtAvatarIcon.Text = "🛡️"; // Icon khiên bảo mật
-                txtDisplayName.Text = "Administrator";
-                txtDisplayRole.Text = "Quản Trị Hệ Thống";
-                txtPermissionLabel.Text = "Toàn quyền (Full Access)";
+            txtAvatarIcon.Text = "🛡️";
+            txtDisplayName.Text = "Administrator";
+            txtDisplayRole.Text = "Quản Trị Hệ Thống";
+            txtPermissionLabel.Text = "Toàn quyền (Full Access)";
 
-                // 2. Form bên phải (Admin được sửa tất cả)
-                SetFieldsReadOnly(false);
-                btnSaveInfo.Visibility = Visibility.Visible; // Hiện nút lưu
+            SetFieldsEditable(true);
+            btnSaveInfo.Visibility = Visibility.Visible;
 
-                // Load dữ liệu mẫu Admin
-                txtID.Text = "ADMIN001";
-                txtClassDept.Text = "Phòng Đào Tạo";
-                txtFullName.Text = "Nguyễn Quản Trị";
-                txtEmail.Text = "admin@dtpsystem.edu.vn";
-            }
-            else
-            {
-                // === CẤU HÌNH CHO SINH VIÊN (Dùng cho sau này) ===
-                // 1. Giao diện bên trái
-                txtAvatarIcon.Text = "🎓"; // Icon mũ tốt nghiệp
-                txtDisplayName.Text = "Nguyễn Văn A"; // Lấy từ DB
-                txtDisplayRole.Text = "Sinh Viên - K15";
-                txtPermissionLabel.Text = "Hạn chế (Chỉ xem)";
-
-                // 2. Form bên phải (Sinh viên KHÔNG ĐƯỢC SỬA thông tin cá nhân)
-                SetFieldsReadOnly(true);
-                btnSaveInfo.Visibility = Visibility.Collapsed; // Ẩn nút lưu đi
-
-                // Load dữ liệu mẫu Sinh viên
-                txtID.Text = "SV2024102";
-                txtClassDept.Text = "CNTT_K15A";
-                txtFullName.Text = "Nguyễn Văn A";
-                txtEmail.Text = "vana@st.dtp.edu.vn";
-            }
+            // Load thông tin mẫu lên giao diện (để nhìn cho đẹp)
+            // Lưu ý: ID hiển thị ở ô text box có thể lấy từ GlobalConfig luôn nếu muốn
+            txtID.Text = GlobalConfig.CurrentUserID;
+            txtFullName.Text = "Admin User";
+            txtEmail.Text = "admin@system.com";
         }
 
-        // Hàm tiện ích để khóa/mở khóa hàng loạt TextBox
-        private void SetFieldsReadOnly(bool isReadOnly)
+        private void SetFieldsEditable(bool isEditable)
         {
-            txtID.IsReadOnly = isReadOnly;
-            txtClassDept.IsReadOnly = isReadOnly;
-            txtFullName.IsReadOnly = isReadOnly;
-            txtDob.IsReadOnly = isReadOnly;
-            txtEmail.IsReadOnly = isReadOnly;
-            txtPhone.IsReadOnly = isReadOnly;
-            txtAddress.IsReadOnly = isReadOnly;
+            if (txtFullName != null) txtFullName.IsReadOnly = !isEditable;
+            if (txtEmail != null) txtEmail.IsReadOnly = !isEditable;
+            if (txtPhone != null) txtPhone.IsReadOnly = !isEditable;
+            if (txtAddress != null) txtAddress.IsReadOnly = !isEditable;
         }
 
         private void BtnSaveInfo_Click(object sender, RoutedEventArgs e)
         {
-            // Chỉ Admin mới bấm được nút này (vì Student bị ẩn nút rồi)
-            MessageBox.Show($"[ADMIN MODE] Đã cập nhật thông tin cho tài khoản: {txtFullName.Text}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Chức năng cập nhật thông tin đang được hoàn thiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        // --- SỰ KIỆN ĐỔI MẬT KHẨU ---
         private void BtnChangePass_Click(object sender, RoutedEventArgs e)
         {
-            // Cả Admin và Student đều dùng được
+            // 1. Validate
+            if (string.IsNullOrEmpty(pbCurrentPass.Password) ||
+                string.IsNullOrEmpty(pbNewPass.Password) ||
+                string.IsNullOrEmpty(pbConfirmPass.Password))
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (pbNewPass.Password != pbConfirmPass.Password)
             {
                 MessageBox.Show("Mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (pbNewPass.Password.Length < 6)
+            {
+                MessageBox.Show("Mật khẩu mới phải có ít nhất 6 ký tự!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            pbCurrentPass.Clear();
-            pbNewPass.Clear();
-            pbConfirmPass.Clear();
+            // 2. Lấy ID người đang đăng nhập từ biến toàn cục
+            string currentUserId = GlobalConfig.CurrentUserID;
+
+            // Kiểm tra nếu chưa đăng nhập (ID rỗng) thì chặn lại ngay
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                MessageBox.Show("Lỗi phiên đăng nhập! Vui lòng đăng nhập lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // 3. Kết nối Database
+            string connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // BƯỚC A: Kiểm tra mật khẩu cũ của ĐÚNG UserID đó
+                    string checkSql = "SELECT COUNT(*) FROM Users WHERE UserID = @ID AND Password = @OldPass";
+
+                    using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@ID", currentUserId);
+                        checkCmd.Parameters.AddWithValue("@OldPass", pbCurrentPass.Password);
+
+                        int count = (int)checkCmd.ExecuteScalar();
+
+                        if (count == 0)
+                        {
+                            MessageBox.Show("Mật khẩu hiện tại không đúng!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+
+                    // BƯỚC B: Cập nhật mật khẩu mới cho ĐÚNG UserID đó
+                    string updateSql = "UPDATE Users SET Password = @NewPass WHERE UserID = @ID";
+
+                    using (SqlCommand updateCmd = new SqlCommand(updateSql, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@NewPass", pbNewPass.Password);
+                        updateCmd.Parameters.AddWithValue("@ID", currentUserId);
+
+                        updateCmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        pbCurrentPass.Clear();
+                        pbNewPass.Clear();
+                        pbConfirmPass.Clear();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối CSDL: " + ex.Message, "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

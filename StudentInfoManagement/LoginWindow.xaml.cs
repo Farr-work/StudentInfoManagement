@@ -14,7 +14,6 @@ namespace StudentInfoManagement
             _dbHelper = new DatabaseHelper();
         }
 
-        // Sự kiện cho nút LoginButton
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string username = txtUsername.Text.Trim();
@@ -28,11 +27,19 @@ namespace StudentInfoManagement
 
             try
             {
-                string role = _dbHelper.AuthenticateUser(username, password);
+                // Biến để hứng ID trả về
+                string userId = "";
+
+                // GỌI HÀM MỚI (Có thêm out userId)
+                string role = _dbHelper.AuthenticateUser(username, password, out userId);
 
                 if (!string.IsNullOrEmpty(role))
                 {
-                    this.Hide(); // Ẩn form đăng nhập
+                    // Lưu ID vào biến toàn cục để dùng ở màn hình khác
+                    // (Dù trong DatabaseHelper đã gán rồi, gán lại ở đây cho chắc chắn logic)
+                    GlobalConfig.CurrentUserID = userId;
+
+                    this.Hide();
 
                     if (role == "Admin")
                     {
@@ -45,7 +52,7 @@ namespace StudentInfoManagement
                         studentWindow.Show();
                     }
 
-                    this.Close(); // Đóng hẳn khi đã chuyển trang thành công
+                    this.Close();
                 }
                 else
                 {
@@ -58,7 +65,6 @@ namespace StudentInfoManagement
             }
         }
 
-        // Sự kiện cho TextBlock formdki (Chuyển sang đăng ký)
         private void RegisterLink_Click(object sender, MouseButtonEventArgs e)
         {
             RegisterWindow registerWindow = new RegisterWindow();
