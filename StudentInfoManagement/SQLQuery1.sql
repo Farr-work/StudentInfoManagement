@@ -125,3 +125,7 @@ CREATE TABLE Notifications (
     Content NVARCHAR(MAX),                     -- Nội dung thông báo
     CreatedAt DATETIME DEFAULT GETDATE()
 );
+
+-- 11. Thêm cột cho bảng LECTURERS
+ALTER TABLE LECTURERS
+ADD PhoneNumber VARCHAR(15);
