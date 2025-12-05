@@ -166,8 +166,8 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,15">
-                                <TextBlock Text="Ngày sinh" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtDob" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
+                                <TextBlock Text="Số điện thoại" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtPhone" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,15">
@@ -175,10 +175,7 @@
                                 <TextBox x:Name="txtEmail" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,15">
-                                <TextBlock Text="Số điện thoại" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtPhone" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
-                            </StackPanel>
+                            
                         </Grid>
 
                         <StackPanel Margin="0,0,0,5">

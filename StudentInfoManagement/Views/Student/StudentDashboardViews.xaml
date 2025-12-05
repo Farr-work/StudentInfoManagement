@@ -60,7 +60,7 @@
                     </Border>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="25,0,0,0">
-                        <TextBlock x:Name="txtStudentName" Text="Nguyễn Văn A" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
+                        <TextBlock x:Name="txtStudentName"  FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
 
                         <Grid Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
@@ -75,23 +75,17 @@
 
                             <StackPanel Grid.Row="0" Grid.Column="0">
                                 <TextBlock Text="Mã sinh viên" FontSize="12" Foreground="{StaticResource TextLight}"/>
-                                <TextBlock x:Name="txtStudentID" Text="2024001" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
+                                <TextBlock x:Name="txtStudentID"  FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
                                 <TextBlock Text="Lớp sinh hoạt" FontSize="12" Foreground="{StaticResource TextLight}"/>
-                                <TextBlock x:Name="txtClass" Text="CNTT_K15A" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
+                                <TextBlock x:Name="txtClass" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="0" Grid.Column="2">
-                                <TextBlock Text="Chuyên ngành" FontSize="12" Foreground="{StaticResource TextLight}"/>
-                                <TextBlock x:Name="txtMajor" Text="Kỹ thuật phần mềm" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
-                            </StackPanel>
+                            
 
-                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
-                                <TextBlock Text="Khoa" FontSize="12" Foreground="{StaticResource TextLight}"/>
-                                <TextBlock Text="Công nghệ thông tin" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextDark}"/>
-                            </StackPanel>
+                            
                         </Grid>
                     </StackPanel>
                 </Grid>

@@ -1,37 +1,81 @@
-﻿using System.Windows;
+﻿using StudentInfoManagement; // Namespace chứa DatabaseHelper và GlobalConfig
+using System;
+using System.Data;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace StudentInfoManagement.Views
 {
     public partial class StudentSettingView : UserControl
     {
+        private readonly DatabaseHelper _dbHelper;
+
         public StudentSettingView()
         {
             InitializeComponent();
+            _dbHelper = new DatabaseHelper();
             LoadStudentData();
         }
 
         private void LoadStudentData()
         {
-            // Tải thông tin giả lập của sinh viên
-            // Trong thực tế, bạn sẽ lấy từ biến Global hoặc Database
-            txtID.Text = "2024001";
-            txtClassDept.Text = "CNTT_K15A";
-            txtFullName.Text = "Nguyễn Văn A";
-            txtDob.Text = "15/01/2003";
-            txtEmail.Text = "vana@st.dtp.edu.vn";
-            txtPhone.Text = "0987654321";
-            txtAddress.Text = "123 Đường Nguyễn Văn Linh, Đà Nẵng";
+            // 1. Lấy Student ID (masv) từ biến Global
+            string studentID = GlobalConfig.CurrentUserID;
 
-            // Update UI Profile Card
-            txtDisplayName.Text = txtFullName.Text;
-            txtDisplayRole.Text = "Sinh viên - " + txtClassDept.Text;
+            if (string.IsNullOrEmpty(studentID))
+            {
+                txtFullName.Text = "Lỗi: Chưa đăng nhập.";
+                return;
+            }
+
+            try
+            {
+                // 2. Gọi phương thức lấy dữ liệu
+                DataTable dt = _dbHelper.GetStudentInfo(studentID);
+
+                if (dt.Rows.Count > 0)
+                {
+                    DataRow row = dt.Rows[0];
+
+                    // 3. Hiển thị dữ liệu lên các control với tên cột mới
+                    txtID.Text = studentID;
+
+                    // Cột: hoten
+                    txtFullName.Text = row["hoten"].ToString();
+
+                    // Cột: tenlop
+                    txtClassDept.Text = row["tenlop"].ToString();
+
+                    // Cột: email
+                    txtEmail.Text = row["email"].ToString();
+
+                    // Cột: sdt
+                    txtPhone.Text = row["sdt"].ToString();
+
+                    // Cột: diachi
+                    txtAddress.Text = row["diachi"].ToString();
+
+                    // LƯU Ý: Bảng Student không có cột Ngày sinh (DoB).
+                    // Nếu bạn có control txtDob, giá trị này sẽ không được điền.
+
+                    // Update UI Profile Card
+                    txtDisplayName.Text = txtFullName.Text;
+                    txtDisplayRole.Text = "Sinh viên - " + txtClassDept.Text;
+                }
+                else
+                {
+                    MessageBox.Show($"Không tìm thấy thông tin sinh viên có Mã: {studentID}. Vui lòng kiểm tra bảng Student.", "Lỗi Dữ liệu");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải thông tin sinh viên: " + ex.Message, "Lỗi Database");
+            }
         }
 
-        // Sự kiện đổi mật khẩu (Chức năng duy nhất SV dùng được ở trang này)
         private void BtnChangePass_Click(object sender, RoutedEventArgs e)
         {
-            // Validate đơn giản
+            // Validate
             if (string.IsNullOrEmpty(pbCurrentPass.Password) ||
                 string.IsNullOrEmpty(pbNewPass.Password) ||
                 string.IsNullOrEmpty(pbConfirmPass.Password))
@@ -46,7 +90,7 @@ namespace StudentInfoManagement.Views
                 return;
             }
 
-            // Logic gọi xuống Database để đổi pass ở đây...
+            // ... (Logic gọi xuống Database để đổi pass ở đây) ...
 
             MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
 
