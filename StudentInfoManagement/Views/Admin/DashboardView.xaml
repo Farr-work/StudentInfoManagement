@@ -140,27 +140,96 @@
             </Border>
         </Grid>
 
-        <Grid x:Name="OverlayInput" Visibility="Collapsed" Background="#7F000000">
-            <Border Background="White" Width="400" MinHeight="300" CornerRadius="12" Padding="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid x:Name="OverlayInput" Visibility="Collapsed" Background="#AA000000" Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="100">
+
+            <Border Background="White" 
+            Width="360" 
+            CornerRadius="15" 
+            Padding="25" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.4"/>
+                </Border.Effect>
+
                 <StackPanel>
-                    <TextBlock Text="Tạo thông báo mới" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Tạo thông báo mới" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       Foreground="#333"
+                       Margin="0,0,0,20" 
+                       HorizontalAlignment="Center"/>
 
-                    <TextBlock Text="Tiêu đề:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtNotiTitle" Height="35" Padding="5" Margin="0,0,0,15" VerticalContentAlignment="Center" BorderBrush="#DDD"/>
+                    <TextBlock Text="Tiêu đề:" FontWeight="SemiBold" Foreground="#555" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtNotiTitle" 
+                     Height="35" 
+                     Padding="8,0" 
+                     Margin="0,0,0,15" 
+                     VerticalContentAlignment="Center" 
+                     BorderBrush="#DDD" 
+                     BorderThickness="1"/>
 
-                    <TextBlock Text="Nội dung:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtNotiContent" Height="100" Padding="5" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,20" VerticalContentAlignment="Top" BorderBrush="#DDD"/>
+                    <TextBlock Text="Nội dung:" FontWeight="SemiBold" Foreground="#555" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtNotiContent" 
+                     Height="100" 
+                     Padding="8" 
+                     TextWrapping="Wrap" 
+                     AcceptsReturn="True" 
+                     Margin="0,0,0,25" 
+                     VerticalContentAlignment="Top" 
+                     BorderBrush="#DDD" 
+                     BorderThickness="1"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Hủy bỏ" Click="BtnCancelNoti_Click" Width="90" Height="35" Margin="0,0,10,0" Background="#F3F4F6" BorderThickness="0" Cursor="Hand"/>
-                        <Button Content="Đăng tin" Click="BtnSubmitNoti_Click" Width="90" Height="35" Background="{StaticResource BlueColor}" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                        <Button Content="Hủy bỏ" 
+                        Click="BtnCancelNoti_Click" 
+                        Width="90" Height="36" 
+                        Margin="0,0,10,0" 
+                        Background="#F3F4F6" 
+                        Foreground="#555"
+                        BorderThickness="0" 
+                        Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <Button Content="Đăng tin" 
+                        Click="BtnSubmitNoti_Click" 
+                        Width="90" Height="36" 
+                        Background="{StaticResource BlueColor}" 
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        BorderThickness="0" 
+                        Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
+        <Grid x:Name="OverlayDetail" Visibility="Collapsed" Background="#AA000000" Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="100" MouseLeftButtonDown="OverlayDetail_Click">
 
-        <Grid x:Name="OverlayDetail" Visibility="Collapsed" Background="#7F000000" MouseLeftButtonDown="OverlayDetail_Click">
-            <Border Background="White" Width="450" MaxHeight="500" CornerRadius="12" Padding="25" VerticalAlignment="Center" HorizontalAlignment="Center" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+            <Border Background="White" 
+            Width="450" 
+            MaxHeight="500" 
+            CornerRadius="15" 
+            Padding="25" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center" 
+            MouseLeftButtonDown="Border_MouseLeftButtonDown">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.4"/>
+                </Border.Effect>
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -169,16 +238,48 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0">
-                        <TextBlock x:Name="lblDetailTitle" Text="Tiêu đề thông báo" FontSize="22" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,5"/>
-                        <TextBlock x:Name="lblDetailDate" Text="01/01/2025 10:00" FontSize="13" Foreground="Gray" Margin="0,0,0,15"/>
-                        <Separator Margin="0,0,0,15"/>
+                        <TextBlock x:Name="lblDetailTitle" 
+                           Text="Tiêu đề thông báo" 
+                           FontSize="22" 
+                           FontWeight="Bold" 
+                           Foreground="#333"
+                           TextWrapping="Wrap" 
+                           Margin="0,0,0,5"/>
+
+                        <TextBlock x:Name="lblDetailDate" 
+                           Text="01/01/2025 10:00" 
+                           FontSize="13" 
+                           Foreground="#666" 
+                           Margin="0,0,0,15"/>
+
+                        <Separator Margin="0,0,0,15" Background="#EEE"/>
                     </StackPanel>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <TextBlock x:Name="lblDetailContent" Text="Nội dung chi tiết..." FontSize="15" TextWrapping="Wrap" LineHeight="24"/>
+                        <TextBlock x:Name="lblDetailContent" 
+                           Text="Nội dung chi tiết..." 
+                           FontSize="15" 
+                           Foreground="#333"
+                           TextWrapping="Wrap" 
+                           LineHeight="24"/>
                     </ScrollViewer>
 
-                    <Button Grid.Row="2" Content="Đóng" Click="BtnCloseDetail_Click" Width="100" Height="35" Margin="0,20,0,0" HorizontalAlignment="Right" Background="#F3F4F6" BorderThickness="0" Cursor="Hand"/>
+                    <Button Grid.Row="2" 
+                    Content="Đóng" 
+                    Click="BtnCloseDetail_Click" 
+                    Width="100" Height="36" 
+                    Margin="0,20,0,0" 
+                    HorizontalAlignment="Right" 
+                    Background="#F3F4F6" 
+                    Foreground="#555"
+                    BorderThickness="0" 
+                    Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </Grid>
             </Border>
         </Grid>
