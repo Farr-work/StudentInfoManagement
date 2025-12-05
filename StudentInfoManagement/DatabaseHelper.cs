@@ -4,10 +4,18 @@ using System.Data;
 
 namespace StudentInfoManagement
 {
+    // --- GLOBAL CONFIG GIỐNG CODE TRƯỚC ---
+    public static class GlobalConfig
+    {
+        // Lưu mã sinh viên sau khi đăng nhập
+        public static string CurrentUserID { get; set; } = string.Empty;
+    }
+
     public class DatabaseHelper
     {
-        // Chuỗi kết nối chuẩn đồng bộ cho toàn project
-        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
+        // Chuỗi kết nối chuẩn
+        private readonly string _connectionString =
+            "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
         // --- 1. XỬ LÝ ĐĂNG NHẬP (AUTH) ---
         public string AuthenticateUser(string username, string password)
@@ -17,8 +25,7 @@ namespace StudentInfoManagement
                 try
                 {
                     conn.Open();
-                    // SỬA: Dùng câu lệnh SQL trực tiếp thay vì Stored Procedure
-                    // Join bảng Users và Roles để lấy tên quyền (Admin/Student...)
+
                     string sql = @"
                         SELECT r.RoleName 
                         FROM Users u
@@ -28,23 +35,61 @@ namespace StudentInfoManagement
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@Username", username);
-                        cmd.Parameters.AddWithValue("@Password", password); // Lưu ý: Nên dùng mã hóa MD5/SHA256 trong thực tế
+                        cmd.Parameters.AddWithValue("@Password", password);
 
                         object result = cmd.ExecuteScalar();
 
-                        // Nếu tìm thấy user khớp user/pass -> trả về RoleName (VD: 'Admin')
+                        // Nếu login thành công
                         if (result != null)
                         {
-                            return result.ToString();
+                            // GIỐNG CODE TRƯỚC: LƯU MÃ SV VÀO GLOBAL
+                            GlobalConfig.CurrentUserID = username;
+
+                            return result.ToString(); // Trả về RoleName
                         }
                     }
                 }
-                catch (Exception) { throw; }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
-            return null; // Đăng nhập thất bại
+            return null;
         }
 
-        // --- 2. ĐĂNG KÝ ADMIN (Tạo tài khoản Admin mới) ---
+        // --- 2. GIỐNG CODE TRƯỚC: LẤY THÔNG TIN SINH VIÊN ---
+        public DataTable GetStudentInfo(string studentID)
+        {
+            string sqlQuery = @"
+                SELECT hoten, tenlop, diachi, email, sdt
+                FROM Student
+                WHERE masv = @StudentID";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@StudentID", studentID);
+
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        return dt;
+                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        // --- 3. CHỨC NĂNG ĐĂNG KÝ ADMIN (GIỮ NGUYÊN) ---
         public bool RegisterAdmin(string username, string password, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -53,34 +98,32 @@ namespace StudentInfoManagement
                 {
                     conn.Open();
 
-                    // BƯỚC 1: Kiểm tra tài khoản tồn tại chưa
+                    // B1: kiểm tra username tồn tại
                     string checkSql = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
                     using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
                     {
                         checkCmd.Parameters.AddWithValue("@Username", username);
-                        int count = (int)checkCmd.ExecuteScalar();
-                        if (count > 0)
+                        if ((int)checkCmd.ExecuteScalar() > 0)
                         {
                             message = "Tên đăng nhập đã tồn tại.";
                             return false;
                         }
                     }
 
-                    // BƯỚC 2: Đảm bảo Role 'Admin' có tồn tại trong bảng Roles
-                    // (Phòng trường hợp chạy code lần đầu chưa có dữ liệu mẫu)
+                    // B2: đảm bảo role Admin tồn tại
                     EnsureRoleExists(conn, 1, "Admin");
 
-                    // BƯỚC 3: Thêm User mới với RoleID = 1 (Admin)
+                    // B3: thêm user mới
                     string insertSql = @"
-                        INSERT INTO Users (Username, Password, FullName, RoleID, CreatedAt) 
+                        INSERT INTO Users (Username, Password, FullName, RoleID, CreatedAt)
                         VALUES (@Username, @Password, N'Administrator', 1, GETDATE())";
 
-                    using (SqlCommand insertCmd = new SqlCommand(insertSql, conn))
+                    using (SqlCommand cmd = new SqlCommand(insertSql, conn))
                     {
-                        insertCmd.Parameters.AddWithValue("@Username", username);
-                        insertCmd.Parameters.AddWithValue("@Password", password);
+                        cmd.Parameters.AddWithValue("@Username", username);
+                        cmd.Parameters.AddWithValue("@Password", password);
 
-                        int rows = insertCmd.ExecuteNonQuery();
+                        int rows = cmd.ExecuteNonQuery();
                         if (rows > 0)
                         {
                             message = "Đăng ký Admin thành công.";
@@ -90,24 +133,28 @@ namespace StudentInfoManagement
                 }
                 catch (Exception ex)
                 {
-                    message = "Lỗi kết nối: " + ex.Message;
+                    message = "Lỗi: " + ex.Message;
                     return false;
                 }
             }
+
             message = "Lỗi không xác định";
             return false;
         }
 
-        // Hàm phụ: Tự động thêm Role vào DB nếu chưa có (Tránh lỗi khóa ngoại)
+        // --- HÀM PHỤ: ĐẢM BẢO ROLE TỒN TẠI ---
         private void EnsureRoleExists(SqlConnection conn, int roleId, string roleName)
         {
             string sqlCheck = "SELECT COUNT(*) FROM Roles WHERE RoleID = @ID";
+
             using (SqlCommand cmd = new SqlCommand(sqlCheck, conn))
             {
                 cmd.Parameters.AddWithValue("@ID", roleId);
+
                 if ((int)cmd.ExecuteScalar() == 0)
                 {
                     string sqlInsert = "INSERT INTO Roles (RoleID, RoleName) VALUES (@ID, @Name)";
+
                     using (SqlCommand insertCmd = new SqlCommand(sqlInsert, conn))
                     {
                         insertCmd.Parameters.AddWithValue("@ID", roleId);
