@@ -77,12 +77,8 @@
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="1" BorderBrush="#2563EB" CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-
                                 <Image Source="/icon/iconimport.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
                                 <TextBlock Text="Xuất CSV" VerticalAlignment="Center"/>
-
-
-
                             </StackPanel>
                         </Border>
                     </ControlTemplate>
@@ -96,12 +92,8 @@
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="1" Background="#2563EB" BorderBrush="#2563EB" CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-
                                 <Image Source="/icon/iconadd.png" Width="12" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" />
                                 <TextBlock Text="Thêm Sinh Viên" VerticalAlignment="Center"/>
-
-
-
                             </StackPanel>
                         </Border>
                     </ControlTemplate>
@@ -170,21 +162,20 @@
                         <DataGridTextColumn Header="Số Điện Thoại" Binding="{Binding sdt}" Width="100"/>
                         <DataGridTextColumn Header="Trạng Thái" Binding="{Binding trangthai}" Width="110"/>
 
-                        <DataGridTemplateColumn Header="Action" Width="100" IsReadOnly="True">
+                        <!-- Cột Action đã chỉnh sửa -->
+                        <DataGridTemplateColumn Header="Thao Tác" Width="100" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                                        <Button Margin="5,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                                            <StackPanel>
-                                                <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" Foreground="Black" FontSize="18" VerticalAlignment="Center" />
-                                            </StackPanel>
+                                        <!-- Nút Sửa: Bỏ StackPanel bên trong, thêm Margin -->
+                                        <Button Click="EditStudent_Click" Margin="0,0" VerticalAlignment="Center" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                            <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" Foreground="Black" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Button>
 
-                                        <Button Margin="5,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                                            <StackPanel>
-                                                <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Foreground="Red" FontSize="18" VerticalAlignment="Center" />
-                                            </StackPanel>
+                                        <!-- Nút Xóa: Bỏ StackPanel bên trong, thêm Margin -->
+                                        <Button Click="DeleteStudent_Click" Margin="0,0" VerticalAlignment="Center" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Foreground="Red" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Button>
 
                                     </StackPanel>
@@ -235,8 +226,8 @@
                      Text="" Margin="236,348,7,88"/>
 
                     <Button Content="Thêm" Margin="306,402,10,34"
-                    Foreground="Blue"
-                    Click="SaveStudent_Click">
+                     Foreground="Blue"
+                     Click="SaveStudent_Click">
 
                     </Button>
                     <Label Content="Thêm Sinh Viên" HorizontalAlignment="Left" Margin="-10,0,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="14"/>
@@ -244,11 +235,12 @@
                     <Label Content="Họ Tên:" HorizontalAlignment="Left" Margin="-10,108,0,0" VerticalAlignment="Top"/>
                     <Label Content="Tên Lớp:" HorizontalAlignment="Left" Margin="-10,174,0,0" VerticalAlignment="Top"/>
                     <Label Content="Giới Tính:" HorizontalAlignment="Left" Margin="236,174,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Giới Tính:" HorizontalAlignment="Left" Margin="236,174,0,0" VerticalAlignment="Top"/>
                     <Label Content="Địa Chỉ:" HorizontalAlignment="Left" Margin="-11,247,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
                     <Label Content="Số Điện Thoại:" HorizontalAlignment="Left" Margin="-10,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
                     <Label Content="Trạng Thái:" HorizontalAlignment="Left" Margin="236,318,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.218,0.616"/>
-                    <Button  Content="Hủy bỏ" Margin="164,402,152,34"
-                        Foreground="Blue" Click="Button_Click_3"/>
+                    <Button Content="Hủy bỏ" Margin="164,402,152,34"
+                         Foreground="Blue" Click="Button_Click_3"/>
 
                 </Grid>
             </Grid>
