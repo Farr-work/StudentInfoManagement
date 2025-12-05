@@ -22,18 +22,10 @@
             </Setter>
         </Style>
 
-        <Style x:Key="ActivityItemStyle" TargetType="Border">
-            <Setter Property="Background" Value="#F9FAFB"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-        </Style>
-
         <SolidColorBrush x:Key="BlueColor" Color="#2563EB"/>
         <SolidColorBrush x:Key="GreenColor" Color="#22C55E"/>
         <SolidColorBrush x:Key="OrangeColor" Color="#F97316"/>
         <SolidColorBrush x:Key="RedColor" Color="#EF4444"/>
-        <SolidColorBrush x:Key="PurpleColor" Color="#A855F7"/>
         <SolidColorBrush x:Key="TextPrimary" Color="#111827"/>
         <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
     </UserControl.Resources>
@@ -43,14 +35,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Dashboard" 
-                   FontSize="28" 
-                   FontWeight="Bold" 
-                   Foreground="{StaticResource TextPrimary}"
-                   Margin="0,0,0,20"/>
+        <TextBlock Text="Tổng Quan" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,20"/>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -66,19 +53,17 @@
                         <TextBlock Text="Tổng sinh viên" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
                         <TextBlock Text="👥" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource BlueColor}"/>
                     </Grid>
-                    <TextBlock Text="1,180" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
-                    <TextBlock Text="+12% so với năm trước" FontSize="13" Foreground="{StaticResource BlueColor}" FontWeight="Medium"/>
+                    <TextBlock x:Name="txtTotalStudent" Text="0" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="1" Style="{StaticResource WhiteCardStyle}">
                 <StackPanel>
                     <Grid>
-                        <TextBlock Text="Khóa học" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="Đang học" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
                         <TextBlock Text="📖" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource GreenColor}"/>
                     </Grid>
-                    <TextBlock Text="48" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
-                    <TextBlock Text="Đang hoạt động" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                    <TextBlock x:Name="txtStudying" Text="0" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
 
@@ -88,8 +73,7 @@
                         <TextBlock Text="Tốt nghiệp" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
                         <TextBlock Text="🎓" FontSize="20" HorizontalAlignment="Right" Foreground="{StaticResource OrangeColor}"/>
                     </Grid>
-                    <TextBlock Text="210" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
-                    <TextBlock Text="Năm học 2024" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                    <TextBlock x:Name="txtGraduated" Text="0" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
 
@@ -97,10 +81,9 @@
                 <StackPanel>
                     <Grid>
                         <TextBlock Text="Thôi học" FontSize="14" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="👤❌" FontSize="18" HorizontalAlignment="Right" Foreground="{StaticResource RedColor}"/>
+                        <TextBlock Text="👤" FontSize="18" HorizontalAlignment="Right" Foreground="{StaticResource RedColor}"/>
                     </Grid>
-                    <TextBlock Text="15" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
-                    <TextBlock Text="Năm học 2024" FontSize="13" Foreground="{StaticResource TextSecondary}"/>
+                    <TextBlock x:Name="txtDropout" Text="0" FontSize="32" FontWeight="Bold" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
         </Grid>
@@ -118,61 +101,7 @@
                         <TextBlock Text="Hoạt động gần đây" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
                     </StackPanel>
 
-                    <Border Style="{StaticResource ActivityItemStyle}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource GreenColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Đã thêm môn học ..." FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="5 phút trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource ActivityItemStyle}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource BlueColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="A đã xóa một môn học" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="15 phút trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource ActivityItemStyle}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource OrangeColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Lê Văn C đã cập nhật thông tin cá nhân" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="1 giờ trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource ActivityItemStyle}" Margin="0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{StaticResource PurpleColor}" VerticalAlignment="Top" Margin="0,5,15,0"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Đã thêm một thông báo" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="2 giờ trước" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                    <StackPanel x:Name="pnlActivities"/>
                 </StackPanel>
             </Border>
 
@@ -189,22 +118,12 @@
                             <TextBlock Text="Thông báo" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
                         </StackPanel>
 
-                        <Button Grid.Column="1" 
-                                Width="32" Height="32"
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                ToolTip="Thêm thông báo mới">
+                        <Button Grid.Column="1" x:Name="BtnAddNoti" Click="BtnAddNoti_Click"
+                                Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Thêm thông báo mới">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="#EFF6FF" CornerRadius="16" x:Name="border">
-                                        <TextBlock Text="+" 
-                                                   FontSize="22" 
-                                                   FontWeight="Bold" 
-                                                   Foreground="{StaticResource BlueColor}"
-                                                   HorizontalAlignment="Center" 
-                                                   VerticalAlignment="Center"
-                                                   Margin="0,-2,0,0"/>
+                                        <TextBlock Text="+" FontSize="22" FontWeight="Bold" Foreground="{StaticResource BlueColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
@@ -215,28 +134,54 @@
                             </Button.Template>
                         </Button>
                     </Grid>
-                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="Lịch thi học kỳ 2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                            <TextBlock Text="Đã cập nhật ngày 01/12/2025" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                        </StackPanel>
-                    </Border>
 
-                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="Đăng ký môn học HK2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                            <TextBlock Text="Mở từ 15/12 - 25/12" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="15">
-                        <StackPanel>
-                            <TextBlock Text="Nộp học phí đợt 2" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextPrimary}"/>
-                            <TextBlock Text="Hạn chót: 20/12/2025" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
-                        </StackPanel>
-                    </Border>
+                    <StackPanel x:Name="pnlNotifications"/>
                 </StackPanel>
             </Border>
         </Grid>
+
+        <Grid x:Name="OverlayInput" Visibility="Collapsed" Background="#7F000000">
+            <Border Background="White" Width="400" MinHeight="300" CornerRadius="12" Padding="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Tạo thông báo mới" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Tiêu đề:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtNotiTitle" Height="35" Padding="5" Margin="0,0,0,15" VerticalContentAlignment="Center" BorderBrush="#DDD"/>
+
+                    <TextBlock Text="Nội dung:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtNotiContent" Height="100" Padding="5" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,20" VerticalContentAlignment="Top" BorderBrush="#DDD"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Hủy bỏ" Click="BtnCancelNoti_Click" Width="90" Height="35" Margin="0,0,10,0" Background="#F3F4F6" BorderThickness="0" Cursor="Hand"/>
+                        <Button Content="Đăng tin" Click="BtnSubmitNoti_Click" Width="90" Height="35" Background="{StaticResource BlueColor}" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="OverlayDetail" Visibility="Collapsed" Background="#7F000000" MouseLeftButtonDown="OverlayDetail_Click">
+            <Border Background="White" Width="450" MaxHeight="500" CornerRadius="12" Padding="25" VerticalAlignment="Center" HorizontalAlignment="Center" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <TextBlock x:Name="lblDetailTitle" Text="Tiêu đề thông báo" FontSize="22" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="lblDetailDate" Text="01/01/2025 10:00" FontSize="13" Foreground="Gray" Margin="0,0,0,15"/>
+                        <Separator Margin="0,0,0,15"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="lblDetailContent" Text="Nội dung chi tiết..." FontSize="15" TextWrapping="Wrap" LineHeight="24"/>
+                    </ScrollViewer>
+
+                    <Button Grid.Row="2" Content="Đóng" Click="BtnCloseDetail_Click" Width="100" Height="35" Margin="0,20,0,0" HorizontalAlignment="Right" Background="#F3F4F6" BorderThickness="0" Cursor="Hand"/>
+                </Grid>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>
