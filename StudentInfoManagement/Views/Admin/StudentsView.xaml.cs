@@ -12,6 +12,9 @@ namespace StudentInfoManagement.Views
         // QUAN TRỌNG: Chuỗi kết nối được chuyển vào đây theo yêu cầu
         private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
+        // Biến trạng thái để xác định đang ở chế độ Thêm (null) hay Sửa (chứa Masv)
+        private string _currentEditingMasv = null;
+
         public StudentsView()
         {
             InitializeComponent();
@@ -31,7 +34,7 @@ namespace StudentInfoManagement.Views
             public string trangthai { get; set; }
         }
 
-        // --- HÀM 1: LẤY DỮ LIỆU SINH VIÊN (CHUYỂN TỪ DatabaseHelper) ---
+        // --- HÀM 1: LẤY DỮ LIỆU SINH VIÊN ---
         private DataTable GetStudentsData()
         {
             DataTable dataTable = new DataTable();
@@ -71,7 +74,7 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- HÀM 2: THÊM SINH VIÊN (CHUYỂN TỪ DatabaseHelper) ---
+        // --- HÀM 2: THÊM SINH VIÊN ---
         public bool InsertStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
             string sqlQuery = "INSERT INTO Student (masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai) VALUES (@MaSV, @HoTen, @TenLop, @GioiTinh, @DiaChi, @Email, @SDT, @TrangThai)";
@@ -123,31 +126,113 @@ namespace StudentInfoManagement.Views
             }
         }
 
+        // --- HÀM 3: CẬP NHẬT SINH VIÊN (SỬA) ---
+        public bool UpdateStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, out string message)
+        {
+            string sqlQuery = "UPDATE Student SET hoten=@HoTen, tenlop=@TenLop, gioitinh=@GioiTinh, diachi=@DiaChi, email=@Email, sdt=@SDT WHERE masv = @MaSV";
 
-        // --- HÀM XỬ LÝ GIAO DIỆN (ĐÃ HOÀN THIỆN) ---
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@MaSV", masv);
+                        cmd.Parameters.AddWithValue("@HoTen", hoten);
+                        cmd.Parameters.AddWithValue("@TenLop", tenlop);
+                        cmd.Parameters.AddWithValue("@GioiTinh", gioitinh);
+                        cmd.Parameters.AddWithValue("@DiaChi", diachi);
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        cmd.Parameters.AddWithValue("@SDT", sdt);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            message = "Cập nhật sinh viên thành công.";
+                            return true;
+                        }
+                        else
+                        {
+                            message = "Không tìm thấy Mã sinh viên để cập nhật.";
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = "Lỗi hệ thống khi cập nhật: " + ex.Message;
+                    return false;
+                }
+            }
+        }
+
+        // --- HÀM 4: XÓA SINH VIÊN (LOGIC SQL ĐÃ THÊM VÀO ĐÂY) ---
+        public bool DeleteStudent(string masv, out string message)
+        {
+            // Câu lệnh SQL DELETE sử dụng tham số để tránh SQL Injection
+            string sqlQuery = "DELETE FROM Student WHERE masv = @MaSV";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@MaSV", masv);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            message = "Xóa sinh viên thành công.";
+                            return true;
+                        }
+                        else
+                        {
+                            message = "Không tìm thấy Mã sinh viên để xóa.";
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = "Lỗi hệ thống khi xóa: " + ex.Message;
+                    return false;
+                }
+            }
+        }
+
+
+        // --- HÀM XỬ LÝ GIAO DIỆN ---
 
         // Mở form thêm mới (Button_Click)
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            _currentEditingMasv = null;
+            MasvTextBox.IsEnabled = true;
             box.Visibility = Visibility.Visible;
             ClearInputFields();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            // Chức năng chưa được xác định, giữ nguyên
+            // Chức năng Xuất CSV/Tìm kiếm (chưa triển khai logic)
         }
 
         // Đóng form thêm mới/Hủy bỏ (Button_Click_3)
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
+            _currentEditingMasv = null;
+            MasvTextBox.IsEnabled = true;
             box.Visibility = Visibility.Hidden;
             ClearInputFields();
         }
 
         private void ClearInputFields()
         {
-            // Xóa nội dung các TextBox trong form thêm/sửa
             MasvTextBox.Clear();
             HotenTextBox.Clear();
             TenlopTextBox.Clear();
@@ -155,10 +240,9 @@ namespace StudentInfoManagement.Views
             DiachiTextBox.Clear();
             EmailTextBox.Clear();
             SdtTextBox.Clear();
-            // Không có TrangthaiTextBox vì đã mặc định là "Đang học"
         }
 
-        // Xử lý nút Thêm trong form modal (SaveStudent_Click)
+        // Xử lý nút Thêm/Sửa trong form modal (SaveStudent_Click)
         private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
             // 1. Lấy dữ liệu từ các TextBox
@@ -169,7 +253,7 @@ namespace StudentInfoManagement.Views
             string diachi = DiachiTextBox.Text.Trim();
             string email = EmailTextBox.Text.Trim();
             string sdt = SdtTextBox.Text.Trim();
-            string trangthai = "Đang học"; // Mặc định trạng thái là "Đang học"
+            string trangthai = "Đang học";
 
             // 2. Kiểm tra dữ liệu cần thiết
             if (string.IsNullOrWhiteSpace(masv) || string.IsNullOrWhiteSpace(hoten))
@@ -178,9 +262,20 @@ namespace StudentInfoManagement.Views
                 return;
             }
 
-            // 3. Gọi hàm InsertStudent
+            // 3. Gọi hàm InsertStudent hoặc UpdateStudent
             string message;
-            bool success = InsertStudent(masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
+            bool success;
+
+            if (_currentEditingMasv != null)
+            {
+                // Chế độ Sửa (Update)
+                success = UpdateStudent(masv, hoten, tenlop, gioitinh, diachi, email, sdt, out message);
+            }
+            else
+            {
+                // Chế độ Thêm mới (Insert)
+                success = InsertStudent(masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
+            }
 
             // 4. Xử lý kết quả
             if (success)
@@ -190,6 +285,8 @@ namespace StudentInfoManagement.Views
                 // Ẩn form và tải lại dữ liệu lưới
                 box.Visibility = Visibility.Hidden;
                 ClearInputFields();
+                _currentEditingMasv = null;
+                MasvTextBox.IsEnabled = true;
                 LoadData();
             }
             else
@@ -198,40 +295,63 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // Xử lý nút Sửa trong DataGrid
+        // Xử lý nút Sửa trong DataGrid (EditStudent_Click)
         private void EditStudent_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
             {
-                // Lấy DataRowView của hàng hiện tại
                 DataRowView studentRow = button.DataContext as DataRowView;
                 if (studentRow != null)
                 {
-                    string maSV = studentRow["masv"].ToString();
-                    MessageBox.Show($"Chức năng Sửa: Bạn đang sửa sinh viên có Mã SV: {maSV}. Cần triển khai hàm UpdateStudent(masv, ...)", "Sửa Sinh Viên", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // Ở đây bạn sẽ nạp dữ liệu của studentRow vào các TextBox để chỉnh sửa
+                    // 1. Thiết lập chế độ Sửa
+                    _currentEditingMasv = studentRow["masv"].ToString();
+
+                    // 2. Nạp dữ liệu vào các TextBox
+                    MasvTextBox.Text = studentRow["masv"].ToString();
+                    HotenTextBox.Text = studentRow["hoten"].ToString();
+                    TenlopTextBox.Text = studentRow["tenlop"].ToString();
+                    GioitinhTextBox.Text = studentRow["gioitinh"].ToString();
+                    DiachiTextBox.Text = studentRow["diachi"].ToString();
+                    EmailTextBox.Text = studentRow["email"].ToString();
+                    SdtTextBox.Text = studentRow["sdt"].ToString();
+
+                    // 3. KHÔNG cho phép sửa Mã SV khi đang ở chế độ chỉnh sửa
+                    MasvTextBox.IsEnabled = false;
+
+                    // 4. Mở form modal
+                    box.Visibility = Visibility.Visible;
                 }
             }
         }
 
-        // Xử lý nút Xóa trong DataGrid
+        // Xử lý nút Xóa trong DataGrid (DeleteStudent_Click)
         private void DeleteStudent_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
             {
-                // Lấy DataRowView của hàng hiện tại
                 DataRowView studentRow = button.DataContext as DataRowView;
                 if (studentRow != null)
                 {
                     string maSV = studentRow["masv"].ToString();
-                    MessageBoxResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sinh viên {studentRow["hoten"]} ({maSV}) không?", "Xác nhận Xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    string hoten = studentRow["hoten"].ToString();
+
+                    MessageBoxResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sinh viên {hoten} ({maSV}) không?", "Xác nhận Xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        // TODO: Triển khai hàm xóa SQL và gọi LoadData()
-                        MessageBox.Show($"Đã gọi chức năng Xóa cho sinh viên {maSV}. Cần triển khai hàm xóa SQL.", "Xóa Sinh Viên", MessageBoxButton.OK, MessageBoxImage.Information);
+                        string message;
+                        // GỌI HÀM DELETE ĐÃ ĐƯỢC THÊM
+                        if (DeleteStudent(maSV, out message))
+                        {
+                            MessageBox.Show(message, "Xóa thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData(); // Tải lại dữ liệu lưới sau khi xóa thành công
+                        }
+                        else
+                        {
+                            MessageBox.Show(message, "Lỗi khi Xóa", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
             }
