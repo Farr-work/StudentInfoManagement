@@ -1,31 +1,19 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows;
+// Đã xóa System.Security.Cryptography vì không dùng nữa
 
 namespace StudentInfoManagement
 {
     public class DatabaseHelper
     {
-        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@";
-        
-        public string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
+        // Chuỗi kết nối của bạn (SmarterASP.NET)
+        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
-        // Đăng nhập (Giữ nguyên)
+        // --- 1. XỬ LÝ ĐĂNG NHẬP & TÀI KHOẢN (AUTH) ---
+
+        // Đăng nhập: Truyền password thô vào Stored Procedure
         public string AuthenticateUser(string username, string password)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -37,7 +25,9 @@ namespace StudentInfoManagement
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@Username", username));
-                        cmd.Parameters.Add(new SqlParameter("@Password", HashPassword(password)));
+
+                        // QUAN TRỌNG: Truyền trực tiếp password, không Hash
+                        cmd.Parameters.Add(new SqlParameter("@Password", password));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -50,7 +40,7 @@ namespace StudentInfoManagement
             return null;
         }
 
-        // Đăng ký ADMIN (Logic mới)
+        // Đăng ký ADMIN: Truyền password thô
         public bool RegisterAdmin(string username, string password, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -58,13 +48,13 @@ namespace StudentInfoManagement
                 try
                 {
                     conn.Open();
-                    // Gọi thủ tục sp_RegisterAdmin thay vì sp_Register cũ
                     using (SqlCommand cmd = new SqlCommand("sp_RegisterAdmin", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        // Không cần truyền FullName nữa vì form đã bỏ
                         cmd.Parameters.Add(new SqlParameter("@Username", username));
-                        cmd.Parameters.Add(new SqlParameter("@PasswordHash", HashPassword(password)));
+
+                        // QUAN TRỌNG: Truyền trực tiếp password, không Hash
+                        cmd.Parameters.Add(new SqlParameter("@Password", password));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -86,10 +76,13 @@ namespace StudentInfoManagement
             message = "Lỗi không xác định";
             return false;
         }
+
+        // --- 2. XỬ LÝ DỮ LIỆU SINH VIÊN (DATA) ---
+
         public DataTable GetStudents()
         {
             DataTable dataTable = new DataTable();
-            // Thay đổi câu truy vấn SQL để lấy tất cả dữ liệu
+            // Lưu ý: Đảm bảo bạn đã tạo bảng 'Student' trong SQL Server
             string sqlQuery = "SELECT masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai FROM Student";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -99,7 +92,6 @@ namespace StudentInfoManagement
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
                     {
-                        // Sử dụng SqlDataAdapter để điền dữ liệu vào DataTable
                         using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
                             adapter.Fill(dataTable);
@@ -108,16 +100,14 @@ namespace StudentInfoManagement
                 }
                 catch (Exception ex)
                 {
-                    // Tùy chọn: Ghi log lỗi hoặc hiển thị thông báo lỗi
                     MessageBox.Show("Lỗi khi tải dữ liệu sinh viên: " + ex.Message);
                 }
             }
             return dataTable;
         }
+
         public bool InsertStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
-            // Cẩn thận: Chuỗi SQL này dễ bị lỗi SQL Injection.
-            // Thực tế nên dùng Stored Procedure hoặc Parameterized Query.
             string sqlQuery = "INSERT INTO Student (masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai) VALUES (@MaSV, @HoTen, @TenLop, @GioiTinh, @DiaChi, @Email, @SDT, @TrangThai)";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -127,7 +117,6 @@ namespace StudentInfoManagement
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
                     {
-                        // Sử dụng Parameterized Query để ngăn chặn SQL Injection và xử lý dữ liệu đúng cách
                         cmd.Parameters.AddWithValue("@MaSV", masv);
                         cmd.Parameters.AddWithValue("@HoTen", hoten);
                         cmd.Parameters.AddWithValue("@TenLop", tenlop);
@@ -146,20 +135,24 @@ namespace StudentInfoManagement
                         }
                         else
                         {
-                            message = "Không có sinh viên nào được thêm (có thể Mã SV đã tồn tại).";
+                            message = "Không thêm được sinh viên (có thể lỗi logic SQL).";
                             return false;
                         }
                     }
                 }
                 catch (SqlException ex)
                 {
-                    // Bắt lỗi cụ thể từ SQL (ví dụ: lỗi trùng khóa chính/Mã SV)
-                    message = "Lỗi SQL khi thêm sinh viên: " + ex.Message;
+                    // Lỗi thường gặp: Trùng khóa chính (Mã SV đã tồn tại)
+                    if (ex.Number == 2627)
+                        message = "Mã sinh viên này đã tồn tại!";
+                    else
+                        message = "Lỗi SQL: " + ex.Message;
+
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    message = "Lỗi không xác định khi thêm sinh viên: " + ex.Message;
+                    message = "Lỗi hệ thống: " + ex.Message;
                     return false;
                 }
             }
