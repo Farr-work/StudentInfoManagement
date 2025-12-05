@@ -122,7 +122,6 @@
         <Grid Grid.Row="0" Margin="5,0,5,15">
             <StackPanel>
                 <TextBlock Text="Đăng ký môn học" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
-                <TextBlock Text="Học kỳ 1 - Năm học 2024-2025" FontSize="14" Foreground="{StaticResource TextLight}" Margin="0,5,0,0"/>
             </StackPanel>
         </Grid>
 

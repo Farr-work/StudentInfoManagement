@@ -8,6 +8,7 @@
              Background="White">
 
     <UserControl.Resources>
+        <!-- Style TextBox -->
         <Style TargetType="TextBox" x:Key="ModalTextBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0"/>
@@ -26,6 +27,7 @@
             </Setter>
         </Style>
 
+        <!-- Style ComboBox -->
         <Style TargetType="ComboBox" x:Key="ModalInputComboBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0,0,0"/>
@@ -36,6 +38,7 @@
             <Setter Property="Background" Value="White"/>
         </Style>
 
+        <!-- Style Buttons -->
         <Style x:Key="BtnCancelStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="#6C757D"/>
@@ -287,9 +290,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Quản lý môn học" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Foreground="#212529"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Lưu" Style="{StaticResource BtnSaveStyle}" Width="100" Margin="0,0,10,0"/>
-                        <Button Content="Xuất CSV" Style="{StaticResource BtnExportStyle}" Width="140" Margin="0,0,10,0"/>
-                        <Button Content="Thêm môn học mới" Style="{StaticResource BtnAddStyle}" Width="180" Margin="0,0,10,0"/>
+                        <Button Click="BtnExport_Click" Content="Xuất CSV" Style="{StaticResource BtnExportStyle}" Width="140" Margin="0,0,10,0"/>
+                        <Button Click="BtnOpenAddModal_Click" Content="Thêm môn học mới" Style="{StaticResource BtnAddStyle}" Width="180" Margin="0,0,10,0"/>
                     </StackPanel>
                 </Grid>
 
@@ -317,26 +319,21 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="🔍" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#6C757D"/>
-                                        <TextBox Grid.Column="1" VerticalAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="#6C757D"/>
+                                        <TextBox x:Name="txtSearch" TextChanged="TxtSearch_TextChanged" Grid.Column="1" VerticalAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="#6C757D"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Học kỳ" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
-                                <ComboBox Height="40" SelectedItem="All Semesters" HorizontalAlignment="Stretch">
+                                <ComboBox x:Name="cbFilterSemester" SelectionChanged="Filter_SelectionChanged" Height="40" SelectedIndex="0" HorizontalAlignment="Stretch">
                                     <ComboBoxItem Content="All Semesters"/>
-                                    <ComboBoxItem Content="Semester 1"/>
-                                    <ComboBoxItem Content="Semester 2"/>
+                                    <ComboBoxItem Content="HK1"/>
+                                    <ComboBoxItem Content="HK2"/>
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Grid.Column="4">
                                 <TextBlock Text="Khoa" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#495057"/>
-                                <ComboBox Height="40" SelectedItem="All Years" HorizontalAlignment="Stretch">
-                                    <ComboBoxItem Content="All Years"/>
-                                    <ComboBoxItem Content="Year 1"/>
-                                    <ComboBoxItem Content="Year 2"/>
-                                    <ComboBoxItem Content="Year 3"/>
-                                    <ComboBoxItem Content="Year 4"/>
+                                <ComboBox x:Name="cbFilterDepartment" SelectionChanged="Filter_SelectionChanged" Height="40" HorizontalAlignment="Stretch" DisplayMemberPath="DepartmentName" SelectedValuePath="DepartmentID">
                                 </ComboBox>
                             </StackPanel>
                         </Grid>
@@ -439,10 +436,10 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="0,0,15,0" ToolTip="Edit">
+                                                <Button Click="BtnEdit_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="0,0,15,0" ToolTip="Edit">
                                                     <TextBlock Text="✎" FontSize="18" Foreground="#343A40"/>
                                                 </Button>
-                                                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Delete">
+                                                <Button Click="BtnDelete_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Delete">
                                                     <TextBlock Text="🗑" FontSize="16" Foreground="#DC3545"/>
                                                 </Button>
                                             </StackPanel>
@@ -456,8 +453,9 @@
             </Grid>
         </ScrollViewer>
 
+        <!-- ADD MODAL -->
         <Grid x:Name="ModalAddCourse" Visibility="Collapsed">
-            <Border Background="#000000" Opacity="0.5"/>
+            <Border Background="#000000" Opacity="0.5" MouseDown="BtnCloseModal_Click"/>
             <Border Background="White" CornerRadius="10" Width="600" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="5" Opacity="0.2"/>
@@ -470,45 +468,30 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0" Margin="20,20,20,10">
-                        <TextBlock Text="Add New Course" FontSize="20" FontWeight="Bold" Foreground="#212529"/>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                        <TextBlock Text="Thêm môn học mới" FontSize="20" FontWeight="Bold" Foreground="#212529"/>
+                        <Button Click="BtnCloseModal_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Cursor="Hand">
                             <TextBlock Text="✕" FontSize="18" Foreground="#6C757D"/>
                         </Button>
                     </Grid>
                     <Border Grid.Row="0" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1" Margin="0,50,0,0"/>
 
                     <StackPanel Grid.Row="1" Margin="25">
+                        <TextBlock Text="Mã môn học" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <!-- ĐỔI THÀNH TEXTBOX -->
+                        <TextBox x:Name="txtCourseCode" Style="{StaticResource ModalTextBox}" Margin="0,0,0,15"/>
 
-                        <TextBlock Text="Course Code" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
-                        <ComboBox x:Name="cbCourseCode"
-                                  Style="{StaticResource ModalInputComboBox}"
-                                  IsEditable="True"
-                                  StaysOpenOnEdit="True"
-                                  IsTextSearchEnabled="False"
-                                  Margin="0,0,0,15"/>
+                        <TextBlock Text="Tên môn học" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <!-- ĐỔI THÀNH TEXTBOX -->
+                        <TextBox x:Name="txtCourseName" Style="{StaticResource ModalTextBox}" Margin="0,0,0,15"/>
 
-                        <TextBlock Text="Course Name" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
-                        <ComboBox x:Name="cbCourseName"
-                                  Style="{StaticResource ModalInputComboBox}"
-                                  IsEditable="True"
-                                  StaysOpenOnEdit="True"
-                                  IsTextSearchEnabled="False"
-                                  Margin="0,0,0,15"/>
-
-                        <TextBlock Text="Credits" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <TextBlock Text="Tín chỉ" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
                         <Border BorderBrush="#CED4DA" BorderThickness="1" CornerRadius="5" Background="White" Height="40" Margin="0,0,0,15">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="txtCredits"
-                                         Text="3"
-                                         VerticalContentAlignment="Center"
-                                         Padding="10,0"
-                                         BorderThickness="0"
-                                         Background="Transparent"
-                                         FontSize="14"/>
+                                <TextBox x:Name="txtCredits" Text="3" VerticalContentAlignment="Center" Padding="10,0" BorderThickness="0" Background="Transparent" FontSize="14"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <RepeatButton Height="19" Background="Transparent" BorderThickness="0" Cursor="Hand">
                                         <RepeatButton.Content>
@@ -524,19 +507,28 @@
                             </Grid>
                         </Border>
 
-                        <TextBlock Text="Department" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
-                        <ComboBox x:Name="cbDepartment"
+                        <!-- ĐÃ THÊM LẠI HỌC KỲ VÀO ĐÂY -->
+                        <TextBlock Text="Học kỳ" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <ComboBox x:Name="cbSemester"
                                   Style="{StaticResource ModalInputComboBox}"
                                   IsEditable="True"
                                   StaysOpenOnEdit="True"
-                                  IsTextSearchEnabled="False"/>
+                                  IsTextSearchEnabled="False"
+                                  Margin="0,0,0,15">
+                            <ComboBoxItem Content="HK1"/>
+                            <ComboBoxItem Content="HK2"/>
+                            <ComboBoxItem Content="HK3"/>
+                        </ComboBox>
+
+                        <TextBlock Text="Khoa" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#212529"/>
+                        <ComboBox x:Name="cbDepartment" Style="{StaticResource ModalInputComboBox}" IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False" DisplayMemberPath="DepartmentName" SelectedValuePath="DepartmentID"/>
                     </StackPanel>
 
                     <Grid Grid.Row="2" Background="#F8F9FA" Margin="0,10,0,0">
                         <Border CornerRadius="0,0,10,10">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
-                                <Button Content="Cancel" Style="{StaticResource BtnCancelStyle}" Width="100" Margin="0,0,10,0"/>
-                                <Button Content="Save Changes" Width="140">
+                                <Button Click="BtnCloseModal_Click" Content="Cancel" Style="{StaticResource BtnCancelStyle}" Width="100" Margin="0,0,10,0"/>
+                                <Button Click="BtnSaveCourse_Click" Content="Save Changes" Width="140">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="#0D6EFD" CornerRadius="5">
