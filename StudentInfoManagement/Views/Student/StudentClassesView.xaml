@@ -6,8 +6,8 @@
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="1100"
              FontFamily="Segoe UI"
-             Background="#F9FAFB">
-
+             Background="#F9FAFB"
+             Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <SolidColorBrush x:Key="PrimaryBlue" Color="#2563EB"/>
         <SolidColorBrush x:Key="SuccessGreen" Color="#16A34A"/>
@@ -149,29 +149,14 @@
                             <Grid>
                                 <TextBlock Text="🔍" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#9CA3AF"/>
                                 <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
-                                         VerticalContentAlignment="Center" Margin="35,0,5,0"/>
+                                         VerticalContentAlignment="Center" Margin="35,0,5,0" 
+                                         TextChanged="txtSearch_TextChanged"/>
                             </Grid>
                         </Border>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="Khoa" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox Style="{StaticResource CleanComboBoxStyle}">
-                            <ComboBoxItem Content="Tất cả các khoa"/>
-                            <ComboBoxItem Content="CNTT"/>
-                            <ComboBoxItem Content="Kinh tế"/>
-                            <ComboBoxItem Content="Ngoại ngữ"/>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="4">
-                        <TextBlock Text="Lớp / Hệ" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox x:Name="cboHe" Style="{StaticResource CleanComboBoxStyle}">
-                            <ComboBoxItem Content="Tất cả"/>
-                            <ComboBoxItem Content="Đại trà"/>
-                            <ComboBoxItem Content="CLC"/>
-                        </ComboBox>
-                    </StackPanel>
+                    <StackPanel Grid.Column="2"/>
+                    <StackPanel Grid.Column="4"/>
                 </Grid>
             </StackPanel>
         </Border>
@@ -196,7 +181,7 @@
 
                     <TextBlock Grid.Column="0" Text="Mã lớp" FontWeight="Bold"/>
                     <TextBlock Grid.Column="1" Text="Tên lớp" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="2" Text="Thời gian" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="2" Text="Học Kì" FontWeight="Bold"/>
                     <TextBlock Grid.Column="3" Text="Giảng viên" FontWeight="Bold"/>
                     <TextBlock Grid.Column="4" Text="Sĩ số" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -225,8 +210,8 @@
                                     <TextBlock Grid.Column="4" Text="{Binding SiSo}" HorizontalAlignment="Center"/>
 
                                     <Button Grid.Column="5"
-                                            Content="{Binding TrangThaiText}"
-                                            Background="{Binding NutColor}"
+                                            Content="Đăng Kí"
+                                            
                                             Foreground="White"
                                             Padding="8,3" Width="90"
                                             HorizontalAlignment="Center"/>
