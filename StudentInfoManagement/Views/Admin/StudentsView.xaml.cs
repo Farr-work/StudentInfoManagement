@@ -21,7 +21,7 @@ namespace StudentInfoManagement.Views
             LoadData();
         }
 
-        #region DATABASE & LOGIC CORE
+        #region DATABASE & LOGIC
 
         private void LogActivity(string action)
         {
@@ -185,7 +185,7 @@ namespace StudentInfoManagement.Views
                 }
                 catch (SqlException ex)
                 {
-                    // Lỗi khi trùng Username/UserID (Masv đã tồn tại trong Users)
+                    //LoadData();
                     if (ex.Number == 2627) message = "Lỗi: Tài khoản người dùng (Username: " + masv + ") đã tồn tại.";
                     else message = "Lỗi SQL khi tạo tài khoản: " + ex.Message;
                     return false;
@@ -200,7 +200,7 @@ namespace StudentInfoManagement.Views
 
         #endregion
 
-        #region UI EVENTS
+        #region XỬ LÝ EVENTS
 
         // SỰ KIỆN NÚT THÊM MỚI
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -231,7 +231,7 @@ namespace StudentInfoManagement.Views
             TrangthaiTextBox.Clear();
         }
 
-        // SỰ KIỆN NÚT LƯU (Bao gồm logic tạo User)
+        // SỰ KIỆN NÚT LƯU
         private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
             string masv = MasvTextBox.Text.Trim();
