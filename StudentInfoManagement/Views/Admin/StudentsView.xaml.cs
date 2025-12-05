@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Data.SqlClient;
@@ -8,10 +11,7 @@ namespace StudentInfoManagement.Views
 {
     public partial class StudentsView : UserControl
     {
-        // Chuỗi kết nối đồng bộ
         private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
-
-        // Biến xác định đang Thêm hay Sửa (null = Thêm)
         private string _currentEditingMasv = null;
 
         public StudentsView()
@@ -20,7 +20,6 @@ namespace StudentInfoManagement.Views
             LoadData();
         }
 
-        // --- HÀM GHI NHẬT KÝ HOẠT ĐỘNG (ActivityLog) ---
         private void LogActivity(string action)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -35,17 +34,14 @@ namespace StudentInfoManagement.Views
                         cmd.ExecuteNonQuery();
                     }
                 }
-                catch { /* Bỏ qua lỗi log */ }
+                catch { }
             }
         }
-
-        // --- CÁC HÀM XỬ LÝ DỮ LIỆU (CRUD) ---
 
         private DataTable GetStudentsData()
         {
             DataTable dataTable = new DataTable();
             string sqlQuery = "SELECT masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai FROM Student";
-
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 try
@@ -71,21 +67,21 @@ namespace StudentInfoManagement.Views
             StudentsGrid.ItemsSource = dt.DefaultView;
         }
 
-        // Thêm Sinh Viên
+        // HÀM INSERT
         public bool InsertStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
             string sql = "INSERT INTO Student (masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai) VALUES (@MaSV, @HoTen, @TenLop, @GioiTinh, @DiaChi, @Email, @SDT, @TrangThai)";
             return ExecuteSql(sql, masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
         }
 
-        // Cập nhật Sinh Viên
-        public bool UpdateStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, out string message)
+        // HÀM UPDATE (Đã sửa để cập nhật cả trangthai)
+        public bool UpdateStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
-            string sql = "UPDATE Student SET hoten=@HoTen, tenlop=@TenLop, gioitinh=@GioiTinh, diachi=@DiaChi, email=@Email, sdt=@SDT WHERE masv = @MaSV";
-            return ExecuteSql(sql, masv, hoten, tenlop, gioitinh, diachi, email, sdt, null, out message);
+            string sql = "UPDATE Student SET hoten=@HoTen, tenlop=@TenLop, gioitinh=@GioiTinh, diachi=@DiaChi, email=@Email, sdt=@SDT, trangthai=@TrangThai WHERE masv = @MaSV";
+            return ExecuteSql(sql, masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
         }
 
-        // Hàm chung thực thi Insert/Update
+        // HÀM EXECUTE CHUNG
         private bool ExecuteSql(string sql, string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -102,8 +98,9 @@ namespace StudentInfoManagement.Views
                         cmd.Parameters.AddWithValue("@DiaChi", diachi);
                         cmd.Parameters.AddWithValue("@Email", email);
                         cmd.Parameters.AddWithValue("@SDT", sdt);
-                        if (trangthai != null)
-                            cmd.Parameters.AddWithValue("@TrangThai", trangthai);
+
+                        // Luôn truyền trạng thái vào (nếu null thì DB có thể lỗi tùy cấu hình, nên đảm bảo không null từ bên ngoài)
+                        cmd.Parameters.AddWithValue("@TrangThai", trangthai ?? "Đang học");
 
                         int rows = cmd.ExecuteNonQuery();
                         if (rows > 0)
@@ -129,7 +126,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // Xóa Sinh Viên
         public bool DeleteStudent(string masv, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -159,20 +155,18 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- XỬ LÝ SỰ KIỆN GIAO DIỆN ---
-
+        // SỰ KIỆN NÚT THÊM MỚI
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            // Nút mở form Thêm mới
             _currentEditingMasv = null;
             MasvTextBox.IsEnabled = true;
+            TrangthaiTextBox.IsEnabled = true; // Cho phép nhập trạng thái
             box.Visibility = Visibility.Visible;
             ClearInputFields();
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            // Nút Hủy
             box.Visibility = Visibility.Hidden;
             ClearInputFields();
         }
@@ -186,8 +180,10 @@ namespace StudentInfoManagement.Views
             DiachiTextBox.Clear();
             EmailTextBox.Clear();
             SdtTextBox.Clear();
+            TrangthaiTextBox.Clear();
         }
 
+        // SỰ KIỆN NÚT LƯU (Đã sửa logic truyền trạng thái)
         private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
             string masv = MasvTextBox.Text.Trim();
@@ -202,25 +198,25 @@ namespace StudentInfoManagement.Views
             string message;
             bool success;
 
+            // Lấy nội dung ô trạng thái
+            string currentStatus = string.IsNullOrWhiteSpace(TrangthaiTextBox.Text) ? "Đang học" : TrangthaiTextBox.Text;
+
             if (_currentEditingMasv != null)
             {
-                // Đang sửa
-                success = UpdateStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, out message);
+                // Sửa: Truyền currentStatus vào hàm Update
+                success = UpdateStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, currentStatus, out message);
             }
             else
             {
-                // Đang thêm mới (Mặc định trạng thái: Đang học)
-                success = InsertStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, "Đang học", out message);
+                // Thêm: Truyền currentStatus vào hàm Insert
+                success = InsertStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, currentStatus, out message);
             }
 
             if (success)
             {
                 MessageBox.Show(message, "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // GHI LOG
-                string action = _currentEditingMasv != null ? $"Đã cập nhật SV: {hoten}" : $"Đã thêm SV: {hoten} ({masv})";
+                string action = _currentEditingMasv != null ? $"Cập nhật SV {masv}. Trạng thái: {currentStatus}" : $"Thêm SV {masv}";
                 LogActivity(action);
-
                 box.Visibility = Visibility.Hidden;
                 LoadData();
             }
@@ -230,6 +226,7 @@ namespace StudentInfoManagement.Views
             }
         }
 
+        // SỰ KIỆN NÚT SỬA (Đã mở khóa ô trạng thái)
         private void EditStudent_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is DataRowView row)
@@ -243,8 +240,11 @@ namespace StudentInfoManagement.Views
                 DiachiTextBox.Text = row["diachi"].ToString();
                 EmailTextBox.Text = row["email"].ToString();
                 SdtTextBox.Text = row["sdt"].ToString();
+                TrangthaiTextBox.Text = row["trangthai"].ToString();
 
-                MasvTextBox.IsEnabled = false; // Không cho sửa mã khi update
+                MasvTextBox.IsEnabled = false;
+                TrangthaiTextBox.IsEnabled = true; // MỞ KHÓA CHO PHÉP SỬA
+
                 box.Visibility = Visibility.Visible;
             }
         }
@@ -262,7 +262,6 @@ namespace StudentInfoManagement.Views
                     if (DeleteStudent(masv, out msg))
                     {
                         MessageBox.Show(msg);
-                        // GHI LOG XÓA
                         LogActivity($"Đã xóa SV: {hoten} ({masv})");
                         LoadData();
                     }
@@ -274,7 +273,80 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // Placeholder cho nút Xuất CSV
-        private void Button_Click_1(object sender, RoutedEventArgs e) { }
+        // Thêm hàm này vào trong file .cs
+        // Xử lý sự kiện khi gõ vào ô tìm kiếm
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // 1. Lấy DataView từ DataGrid
+            DataView dv = StudentsGrid.ItemsSource as DataView;
+            if (dv == null) return;
+
+            // 2. Lấy từ khóa và xử lý ký tự đặc biệt (dấu nháy đơn) để tránh lỗi cú pháp
+            string keyword = SearchTextBox.Text.Trim().Replace("'", "''");
+
+            try
+            {
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    // Nếu ô trống thì bỏ lọc (hiện tất cả)
+                    dv.RowFilter = "";
+                }
+                else
+                {
+                    // 3. Tạo câu lệnh lọc cho TẤT CẢ các cột
+                    // Cú pháp: Cột1 LIKE '%từ_khóa%' OR Cột2 LIKE '%từ_khóa%' ...
+                    // {0} sẽ được thay thế bằng biến keyword bên dưới
+                    string filterFormat = "masv LIKE '%{0}%' OR " +
+                                          "hoten LIKE '%{0}%' OR " +
+                                          "tenlop LIKE '%{0}%' OR " +
+                                          "gioitinh LIKE '%{0}%' OR " +
+                                          "diachi LIKE '%{0}%' OR " +
+                                          "trangthai LIKE '%{0}%'";
+
+                    dv.RowFilter = string.Format(filterFormat, keyword);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ghi nhận lỗi nếu có (thường ít khi xảy ra với DataView)
+                System.Diagnostics.Debug.WriteLine("Lỗi tìm kiếm: " + ex.Message);
+            }
+        }
+
+        // SỰ KIỆN XUẤT CSV (NOTEPAD)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                DataTable dt = null;
+                if (StudentsGrid.ItemsSource is DataView dv) dt = dv.Table;
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để xuất.");
+                    return;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                foreach (DataColumn col in dt.Columns) sb.Append(col.ColumnName + ",");
+                sb.AppendLine();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    foreach (var item in row.ItemArray)
+                        sb.Append(item.ToString().Replace(",", " ") + ",");
+                    sb.AppendLine();
+                }
+
+                string tempPath = Path.GetTempFileName() + ".txt";
+                File.WriteAllText(tempPath, sb.ToString(), Encoding.UTF8);
+
+                Process.Start(new ProcessStartInfo { FileName = "notepad.exe", Arguments = tempPath, UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi xuất file: " + ex.Message);
+            }
+        }
     }
 }
