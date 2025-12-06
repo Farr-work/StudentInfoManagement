@@ -49,7 +49,8 @@ namespace StudentInfoManagement.Views.Student
         // ===============================================
         private void LoadStudentProfile()
         {
-            string studentID = GlobalConfig.CurrentUserID;
+            // Use the login username (masv) stored in CurrentUsername to fetch Student table
+            string studentID = GlobalConfig.CurrentUsername;
 
             if (string.IsNullOrEmpty(studentID))
             {

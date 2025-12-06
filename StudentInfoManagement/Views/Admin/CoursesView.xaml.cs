@@ -123,7 +123,7 @@ namespace StudentInfoManagement.Views
             if (!string.IsNullOrEmpty(deptId) && deptId != "ALL")
                 filter += $" AND DepartmentID = '{deptId}'";
 
-            if (!string.IsNullOrEmpty(semester) && semester != "All Semesters")
+            if (!string.IsNullOrEmpty(semester) && semester != "Tất cả")
                 filter += $" AND Semester LIKE '%{semester}%'";
 
             try { dv.RowFilter = filter; } catch (Exception ex) { Debug.WriteLine(ex.Message); }
