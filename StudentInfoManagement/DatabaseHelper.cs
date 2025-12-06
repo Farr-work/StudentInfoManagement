@@ -19,11 +19,10 @@ namespace StudentInfoManagement
             "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
         // --- 1. XỬ LÝ ĐĂNG NHẬP (AUTH) ---
-        // SỬA: Thêm tham số "out string userId" để lấy ID ra ngoài
         public string AuthenticateUser(string username, string password, out string userId)
         {
-            userId = ""; // Mặc định là rỗng
-            string role = ""; // Mặc định chưa có quyền
+            userId = "";
+            string role = "";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -31,7 +30,6 @@ namespace StudentInfoManagement
                 {
                     conn.Open();
 
-                    // SỬA SQL: Lấy cả RoleName VÀ UserID (Giả sử cột khóa chính tên là UserID)
                     string sql = @"
                         SELECT r.RoleName, u.UserID 
                         FROM Users u
@@ -43,7 +41,6 @@ namespace StudentInfoManagement
                         cmd.Parameters.AddWithValue("@Username", username);
                         cmd.Parameters.AddWithValue("@Password", password);
 
-                        // SỬA: Dùng ExecuteReader thay vì ExecuteScalar để đọc nhiều cột
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
@@ -52,14 +49,11 @@ namespace StudentInfoManagement
                                 role = reader["RoleName"].ToString();
 
                                 // 2. Lấy ID từ Database
-                                // LƯU Ý: Cột trong SQL phải tên là 'UserID'. Nếu là 'Id' thì sửa dòng dưới thành ["Id"]
                                 userId = reader["UserID"].ToString();
 
                                 // Cập nhật GlobalConfig:
-                                // - CurrentUserID giữ numeric DB user id (string form) — used by admin/change-password logic
-                                // - CurrentUsername giữ the login username (for students this is MaSV) — used to fetch Student info        
                                 GlobalConfig.CurrentUserID = userId;
-                                GlobalConfig.CurrentUsername = username; // <-- set username (masv for student accounts)
+                                GlobalConfig.CurrentUsername = username;
                             }
                         }
                     }
@@ -70,7 +64,7 @@ namespace StudentInfoManagement
                 }
             }
 
-            return role; // Trả về Role (Admin/Student) hoặc chuỗi rỗng nếu thất bại
+            return role;
         }
 
         // --- 2. LẤY THÔNG TIN SINH VIÊN (GIỮ NGUYÊN) ---
@@ -180,50 +174,65 @@ namespace StudentInfoManagement
                 }
             }
         }
-        public bool ChangePassword(string userId, string currentPassword, string newPassword, out string message)
+
+        // --- 4. CHỨC NĂNG ĐỔI MẬT KHẨU (TỐI ƯU HÓA) ---
+        // SỬA: Loại bỏ logic Stored Procedure phức tạp, sử dụng logic SQL trực tiếp như SettingViews (nhưng vẫn bọc trong helper)
+        public bool ChangePassword(string username, string currentPassword, string newPassword, out string message)
         {
             message = "";
+
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 try
                 {
                     conn.Open();
 
-                    // Gọi SP: sp_ChangePassword
-                    using (SqlCommand cmd = new SqlCommand("sp_ChangePassword", conn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
+                    // STEP 1: Kiểm tra mật khẩu hiện tại có khớp với Username và Password cũ không.
+                    // Nếu Username là MaSV thì nó sẽ khớp với cột Username trong bảng Users
+                    string checkSql = "SELECT UserID FROM Users WHERE Username = @Username AND Password = @OldPass";
+                    object result;
 
-                        // UserID trong DB là INT, cần chuyển đổi từ string GlobalConfig
-                        if (!int.TryParse(userId, out int userIDInt))
+                    using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@Username", username);
+                        checkCmd.Parameters.AddWithValue("@OldPass", currentPassword);
+
+                        result = checkCmd.ExecuteScalar();
+                    }
+
+                    if (result == null)
+                    {
+                        message = "Mật khẩu hiện tại không đúng!";
+                        return false;
+                    }
+
+                    string userId = result.ToString(); // Lấy UserID thực tế từ DB
+
+                    // STEP 2: Cập nhật mật khẩu mới cho ĐÚNG UserID đó
+                    string updateSql = "UPDATE Users SET Password = @NewPass WHERE UserID = @ID";
+
+                    using (SqlCommand updateCmd = new SqlCommand(updateSql, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@NewPass", newPassword);
+                        updateCmd.Parameters.AddWithValue("@ID", userId);
+
+                        int rows = updateCmd.ExecuteNonQuery();
+
+                        if (rows > 0)
                         {
-                            message = "ID người dùng không hợp lệ.";
+                            message = "Đổi mật khẩu thành công!";
+                            return true;
+                        }
+                        else
+                        {
+                            message = "Không tìm thấy UserID để cập nhật.";
                             return false;
                         }
-
-                        cmd.Parameters.AddWithValue("@UserID", userIDInt); // Gửi INT
-                        cmd.Parameters.AddWithValue("@CurrentPassword", currentPassword);
-                        cmd.Parameters.AddWithValue("@NewPassword", newPassword);
-
-                        // Output parameters
-                        SqlParameter resultParam = new SqlParameter("@ResultCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
-                        SqlParameter msgParam = new SqlParameter("@Message", SqlDbType.NVarChar, 100) { Direction = ParameterDirection.Output };
-
-                        cmd.Parameters.Add(resultParam);
-                        cmd.Parameters.Add(msgParam);
-
-                        cmd.ExecuteNonQuery();
-
-                        // Đọc giá trị trả về
-                        int resultCode = (int)resultParam.Value;
-                        message = msgParam.Value.ToString();
-
-                        return resultCode == 1; // 1 là thành công theo SP
                     }
                 }
                 catch (Exception ex)
                 {
-                    message = "Lỗi Database khi đổi mật khẩu: " + ex.Message;
+                    message = "Lỗi Database: " + ex.Message;
                     return false;
                 }
             }

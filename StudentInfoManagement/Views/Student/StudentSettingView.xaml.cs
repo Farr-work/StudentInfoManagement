@@ -4,6 +4,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.Data.SqlClient; // Giữ lại vì DatabaseHelper cần
 
 namespace StudentInfoManagement.Views
 {
@@ -15,14 +16,47 @@ namespace StudentInfoManagement.Views
         {
             InitializeComponent();
             _dbHelper = new DatabaseHelper();
+
+            // Attach change-password click handler at runtime
+            var changeBtn = FindChangePasswordButton(this);
+            if (changeBtn != null)
+            {
+                changeBtn.Click += BtnChangePass_Click;
+            }
+
             LoadStudentData();
+        }
+
+        private Button? FindChangePasswordButton(DependencyObject parent)
+        {
+            if (parent == null) return null;
+
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is Button btn)
+                {
+                    var content = btn.Content?.ToString()?.Trim() ?? string.Empty;
+                    if (string.Equals(content, "Đổi Mật Khẩu", StringComparison.Ordinal))
+                    {
+                        return btn;
+                    }
+                }
+
+                var result = FindChangePasswordButton(child);
+                if (result != null) return result;
+            }
+
+            return null;
         }
 
         private void LoadStudentData()
         {
-            // Use the login username as student identifier. For student accounts Username = masv.
-            // GlobalConfig.CurrentUserID remains the numeric DB UserID for admin/password operations.
-            string studentID = !string.IsNullOrEmpty(GlobalConfig.CurrentUsername) ? GlobalConfig.CurrentUsername :     GlobalConfig.CurrentUserID;
+            // Use the login username as student identifier. For student accounts Username = masv.
+            // GlobalConfig.CurrentUserID remains the numeric DB UserID for admin/password operations.
+            string studentID = !string.IsNullOrEmpty(GlobalConfig.CurrentUsername) ? GlobalConfig.CurrentUsername : GlobalConfig.CurrentUserID;
 
             if (string.IsNullOrEmpty(studentID))
             {
@@ -40,19 +74,19 @@ namespace StudentInfoManagement.Views
                 {
                     DataRow row = dt.Rows[0];
 
-                    // Hiển thị dữ liệu
-                    txtID.Text = studentID;
+                    // Hiển thị dữ liệu
+                    txtID.Text = studentID;
                     txtFullName.Text = row["hoten"].ToString();
                     txtClassDept.Text = row["tenlop"].ToString();
                     txtEmail.Text = row["email"].ToString();
                     txtPhone.Text = row["sdt"].ToString();
                     txtAddress.Text = row["diachi"].ToString();
 
-                    // Update UI Profile Card
-                    txtDisplayName.Text = txtFullName.Text;
+                    // Update UI Profile Card
+                    txtDisplayName.Text = txtFullName.Text;
 
-                    // Lấy ra tên khóa (giả sử K15)
-                    string className = txtClassDept.Text;
+                    // Lấy ra tên khóa (giả sử K15)
+                    string className = txtClassDept.Text;
                     string cohort = className.Contains("-") ? className.Split('-')[0].Trim() : className;
                     txtDisplayRole.Text = "Sinh viên - " + cohort;
                 }
@@ -67,14 +101,30 @@ namespace StudentInfoManagement.Views
             }
         }
 
+
+        // Bạn có thể thêm một hàm rỗng cho BtnSaveInfo_Click nếu bạn có nút này trong XAML
+        private void BtnSaveInfo_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Chức năng cập nhật thông tin đang được hoàn thiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private void BtnChangePass_Click(object sender, RoutedEventArgs e)
         {
             string currentPass = pbCurrentPass.Password;
             string newPass = pbNewPass.Password;
             string confirmPass = pbConfirmPass.Password;
-            string userId = GlobalConfig.CurrentUserID;
 
-            // Validate chung
+            // Lấy Tên đăng nhập (Username/MaSV) để truyền cho DatabaseHelper.ChangePassword
+            string currentUsername = GlobalConfig.CurrentUsername;
+
+            // 0. Kiểm tra phiên đăng nhập
+            if (string.IsNullOrEmpty(currentUsername))
+            {
+                MessageBox.Show("Lỗi phiên đăng nhập! Vui lòng đăng nhập lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // 1. Validate
             if (string.IsNullOrEmpty(currentPass) || string.IsNullOrEmpty(newPass) || string.IsNullOrEmpty(confirmPass))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ thông tin mật khẩu!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -102,7 +152,8 @@ namespace StudentInfoManagement.Views
             try
             {
                 string message;
-                bool success = _dbHelper.ChangePassword(userId, currentPass, newPass, out message);
+                // Gọi hàm ChangePassword trong DatabaseHelper (sử dụng Username)
+                bool success = _dbHelper.ChangePassword(currentUsername, currentPass, newPass, out message);
 
                 if (success)
                 {
@@ -123,4 +174,4 @@ namespace StudentInfoManagement.Views
             }
         }
     }
-}   
+}
