@@ -218,7 +218,7 @@
                                             <ColumnDefinition Width="1*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="{Binding SubjectID}" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2563EB"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding SubjectID}" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
 
                                         <TextBlock Grid.Column="1" Text="{Binding SubjectName}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
 

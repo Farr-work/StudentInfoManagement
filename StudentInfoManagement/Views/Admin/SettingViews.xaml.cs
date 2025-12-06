@@ -18,13 +18,11 @@ namespace StudentInfoManagement.Views
             txtAvatarIcon.Text = "🛡️";
             txtDisplayName.Text = "Administrator";
             txtDisplayRole.Text = "Quản Trị Hệ Thống";
-            txtPermissionLabel.Text = "Toàn quyền (Full Access)";
+            txtPermissionLabel.Text = "Full Access";
 
             SetFieldsEditable(true);
             btnSaveInfo.Visibility = Visibility.Visible;
 
-            // Load thông tin mẫu lên giao diện (để nhìn cho đẹp)
-            // Lưu ý: ID hiển thị ở ô text box có thể lấy từ GlobalConfig luôn nếu muốn
             txtID.Text = GlobalConfig.CurrentUserID;
             txtFullName.Text = "Admin User";
             txtEmail.Text = "admin@system.com";
@@ -43,10 +41,8 @@ namespace StudentInfoManagement.Views
             MessageBox.Show("Chức năng cập nhật thông tin đang được hoàn thiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // --- SỰ KIỆN ĐỔI MẬT KHẨU ---
         private void BtnChangePass_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Validate
             if (string.IsNullOrEmpty(pbCurrentPass.Password) ||
                 string.IsNullOrEmpty(pbNewPass.Password) ||
                 string.IsNullOrEmpty(pbConfirmPass.Password))
@@ -67,17 +63,15 @@ namespace StudentInfoManagement.Views
                 return;
             }
 
-            // 2. Lấy ID người đang đăng nhập từ biến toàn cục
+            //  Lấy ID người đang đăng nhập từ biến toàn cục ( App.xaml )
             string currentUserId = GlobalConfig.CurrentUserID;
 
-            // Kiểm tra nếu chưa đăng nhập (ID rỗng) thì chặn lại ngay
             if (string.IsNullOrEmpty(currentUserId))
             {
                 MessageBox.Show("Lỗi phiên đăng nhập! Vui lòng đăng nhập lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            // 3. Kết nối Database
             string connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -86,7 +80,7 @@ namespace StudentInfoManagement.Views
                 {
                     conn.Open();
 
-                    // BƯỚC A: Kiểm tra mật khẩu cũ của ĐÚNG UserID đó
+                    // Check pass 
                     string checkSql = "SELECT COUNT(*) FROM Users WHERE UserID = @ID AND Password = @OldPass";
 
                     using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
@@ -103,7 +97,7 @@ namespace StudentInfoManagement.Views
                         }
                     }
 
-                    // BƯỚC B: Cập nhật mật khẩu mới cho ĐÚNG UserID đó
+                    // 
                     string updateSql = "UPDATE Users SET Password = @NewPass WHERE UserID = @ID";
 
                     using (SqlCommand updateCmd = new SqlCommand(updateSql, conn))

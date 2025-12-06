@@ -11,7 +11,6 @@ namespace StudentInfoManagement.Views
 {
     public partial class StudentsView : UserControl
     {
-        // THAY ĐỔI CẦN THIẾT: Đảm bảo chuỗi kết nối của bạn là chính xác
         private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
         private string _currentEditingMasv = null;
 
@@ -70,14 +69,12 @@ namespace StudentInfoManagement.Views
             StudentsGrid.ItemsSource = dt.DefaultView;
         }
 
-        // HÀM INSERT
         public bool InsertStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
             string sql = "INSERT INTO Student (masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai) VALUES (@MaSV, @HoTen, @TenLop, @GioiTinh, @DiaChi, @Email, @SDT, @TrangThai)";
             return ExecuteSql(sql, masv, hoten, tenlop, gioitinh, diachi, email, sdt, trangthai, out message);
         }
 
-        // HÀM UPDATE
         public bool UpdateStudent(string masv, string hoten, string tenlop, string gioitinh, string diachi, string email, string sdt, string trangthai, out string message)
         {
             string sql = "UPDATE Student SET hoten=@HoTen, tenlop=@TenLop, gioitinh=@GioiTinh, diachi=@DiaChi, email=@Email, sdt=@SDT, trangthai=@TrangThai WHERE masv = @MaSV";
@@ -156,14 +153,12 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // HÀM TẠO TÀI KHOẢN USER CHO SINH VIÊN (Username là MaSV, Password là 123)
+        // HÀM TẠO ACCOUNT MẶC ĐỊNH CHO SINH VIÊN
         private bool CreateUserForStudent(string masv, string hoten, out string message)
         {
-            // Cần kiểm tra trong bảng Roles của bạn. Giả sử RoleID = 2 là vai trò cho Sinh viên.
-            const int studentRoleId = 2;
+            const int studentRoleId = 2; // role 2 == Sinh viên
             const string defaultPassword = "123";
 
-            // Lưu ý: Trong thực tế, cần HASH mật khẩu trước khi lưu
             string sql = "INSERT INTO Users (Username, Password, FullName, RoleID, CreatedAt) VALUES (@Username, @Password, @FullName, @RoleID, GETDATE())";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -173,8 +168,8 @@ namespace StudentInfoManagement.Views
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Username", masv); // Đặt Username là MaSV
-                        cmd.Parameters.AddWithValue("@Password", defaultPassword); // Đặt Password mặc định là 123
+                        cmd.Parameters.AddWithValue("@Username", masv);
+                        cmd.Parameters.AddWithValue("@Password", defaultPassword);
                         cmd.Parameters.AddWithValue("@FullName", hoten);
                         cmd.Parameters.AddWithValue("@RoleID", studentRoleId);
 
@@ -250,25 +245,21 @@ namespace StudentInfoManagement.Views
 
             if (_currentEditingMasv != null)
             {
-                // THAO TÁC SỬA (UPDATE)
                 success = UpdateStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, currentStatus, out message);
             }
             else
             {
-                // THAO TÁC THÊM MỚI (INSERT)
                 success = InsertStudent(masv, hoten, TenlopTextBox.Text, GioitinhTextBox.Text, DiachiTextBox.Text, EmailTextBox.Text, SdtTextBox.Text, currentStatus, out message);
 
                 if (success)
                 {
                     string userMessage;
-                    // Gọi hàm tạo tài khoản sau khi thêm SV thành công
                     if (CreateUserForStudent(masv, hoten, out userMessage))
                     {
-                        message += "\n" + userMessage; // Thêm thông báo tạo user
+                        message += "\n" + userMessage;
                     }
                     else
                     {
-                        // Cảnh báo nếu tạo User thất bại (nhưng vẫn thêm SV thành công)
                         message += "\n**CẢNH BÁO:** " + userMessage;
                     }
                 }
@@ -290,7 +281,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // SỰ KIỆN NÚT SỬA
         private void EditStudent_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is DataRowView row)
@@ -313,7 +303,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // SỰ KIỆN NÚT XÓA
         private void DeleteStudent_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is DataRowView row)
@@ -338,7 +327,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // SỰ KIỆN TÌM KIẾM
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataView dv = StudentsGrid.ItemsSource as DataView;
@@ -370,7 +358,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // SỰ KIỆN XUẤT CSV (NOTEPAD)
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             try

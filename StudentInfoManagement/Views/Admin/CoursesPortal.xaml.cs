@@ -9,7 +9,6 @@ using Microsoft.Data.SqlClient;
 
 namespace StudentInfoManagement.Views
 {
-    // Model cho Môn học với Logic hiển thị trạng thái
     public class SubjectViewModel
     {
         public string SubjectID { get; set; }
@@ -18,26 +17,16 @@ namespace StudentInfoManagement.Views
         public string DepartmentID { get; set; }
         public string DepartmentName { get; set; }
 
-        // Trạng thái từ Database (True = Đang mở, False = Đóng)
         public bool IsActive { get; set; }
 
-        // --- Logic hiển thị (Computed Properties) ---
-
-        // 1. Chữ hiển thị ở cột Trạng thái
         public string StatusText => IsActive ? "Đang mở" : "Đang đóng";
 
-        // 2. Màu nền Badge trạng thái (Xanh lá / Xám đỏ)
         public Brush StatusBgColor => IsActive ?
             (Brush)new BrushConverter().ConvertFrom("#DCFCE7") : // Xanh nhạt
             (Brush)new BrushConverter().ConvertFrom("#F3F4F6");  // Xám
-
-        // 3. Màu chữ Badge trạng thái
         public Brush StatusFgColor => IsActive ? Brushes.DarkGreen : Brushes.Gray;
 
-        // 4. Chữ trên nút bấm (Ngược với trạng thái hiện tại)
         public string ActionButtonText => IsActive ? "Đóng lớp" : "Mở lớp";
-
-        // 5. Màu nút bấm (Đỏ để đóng, Xanh để mở)
         public Brush ActionButtonColor => IsActive ? Brushes.Red : Brushes.DodgerBlue;
     }
 
@@ -53,8 +42,6 @@ namespace StudentInfoManagement.Views
             LoadDepartments();
             LoadDataFromDB();
         }
-
-        // --- TẢI DỮ LIỆU ---
         private void LoadDataFromDB()
         {
             _allSubjects = new List<SubjectViewModel>();
@@ -63,13 +50,12 @@ namespace StudentInfoManagement.Views
                 try
                 {
                     conn.Open();
-                    // SỬA CÂU SQL: Thêm s.DepartmentID vào SELECT
                     string sql = @"
                 SELECT 
                     s.SubjectID, 
                     s.SubjectName, 
                     s.Credits, 
-                    s.DepartmentID,  -- <-- Thêm dòng này
+                    s.DepartmentID,
                     ISNULL(d.DepartmentName, 'Chưa phân khoa') AS DepartmentName,
                     ISNULL(s.IsActive, 0) AS IsActive 
                 FROM SUBJECTS s
@@ -86,11 +72,7 @@ namespace StudentInfoManagement.Views
                                 SubjectID = reader["SubjectID"].ToString(),
                                 SubjectName = reader["SubjectName"].ToString(),
                                 Credits = Convert.ToInt32(reader["Credits"]),
-
-                                // --- THÊM DÒNG NÀY ---
                                 DepartmentID = reader["DepartmentID"]?.ToString(),
-                                // ---------------------
-
                                 DepartmentName = reader["DepartmentName"].ToString(),
                                 IsActive = Convert.ToBoolean(reader["IsActive"])
                             });
@@ -126,7 +108,7 @@ namespace StudentInfoManagement.Views
             catch { }
         }
 
-        // --- BỘ LỌC ---
+        // --- LỌC ---
         private void OnFilterChanged(object sender, RoutedEventArgs e)
         {
             ApplyFilters();
@@ -138,7 +120,6 @@ namespace StudentInfoManagement.Views
 
             string keyword = txtSearch.Text.ToLower();
 
-            // Lấy Mã khoa đang chọn từ ComboBox
             string selectedDeptID = cbFilterDepartment.SelectedValue?.ToString();
 
             string selectedStatus = (cbStatus.SelectedItem as ComboBoxItem)?.Content.ToString();
@@ -148,14 +129,9 @@ namespace StudentInfoManagement.Views
                 bool matchKeyword = string.IsNullOrEmpty(keyword) ||
                                     s.SubjectID.ToLower().Contains(keyword) ||
                                     s.SubjectName.ToLower().Contains(keyword);
-
-                // --- SỬA LẠI LOGIC LỌC KHOA ---
-                // Nếu chọn "ALL" hoặc null -> Lấy hết.
-                // Ngược lại -> So sánh Mã khoa của môn học (s.DepartmentID) với Mã khoa đã chọn.
                 bool matchDept = string.IsNullOrEmpty(selectedDeptID) ||
                                  selectedDeptID == "ALL" ||
                                  s.DepartmentID == selectedDeptID;
-                // ------------------------------
 
                 bool matchStatus = selectedStatus == "Tất cả" ||
                                    (selectedStatus == "Đang mở" && s.IsActive) ||
@@ -166,8 +142,6 @@ namespace StudentInfoManagement.Views
 
             icClassList.ItemsSource = filteredList;
         }
-        // --- XỬ LÝ NÚT BẬT/TẮT (TOGGLE) ---
-        // --- XỬ LÝ NÚT BẬT/TẮT (TOGGLE) + TỰ ĐỘNG TẠO LỚP ---
         private void BtnToggle_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -181,7 +155,7 @@ namespace StudentInfoManagement.Views
             bool newStatus = !subject.IsActive;
             string actionName = newStatus ? "Mở" : "Đóng";
 
-            if (MessageBox.Show($"Bạn có chắc muốn {actionName} đăng ký cho môn {subject.SubjectName}?",
+            if (MessageBox.Show($"Bạn có chắc muốn {actionName} đăng ký môn {subject.SubjectName}?",
                                 "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -190,7 +164,6 @@ namespace StudentInfoManagement.Views
                     {
                         conn.Open();
 
-                        // 1. Cập nhật trạng thái Môn học
                         string updateSql = "UPDATE SUBJECTS SET IsActive = @Status WHERE SubjectID = @Id";
                         using (SqlCommand cmd = new SqlCommand(updateSql, conn))
                         {
@@ -199,17 +172,14 @@ namespace StudentInfoManagement.Views
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 2. LOGIC TỰ ĐỘNG TẠO LỚP (Nếu đang MỞ và CHƯA CÓ LỚP)
                         if (newStatus == true)
                         {
-                            // Kiểm tra xem môn này đã có lớp nào trong bảng SECTIONS chưa
                             string checkSectionSql = "SELECT COUNT(*) FROM SECTIONS WHERE SubjectID = @SubId";
                             using (SqlCommand checkCmd = new SqlCommand(checkSectionSql, conn))
                             {
                                 checkCmd.Parameters.AddWithValue("@SubId", subjectId);
                                 int sectionCount = (int)checkCmd.ExecuteScalar();
 
-                                // Nếu chưa có lớp nào -> Tự động tạo lớp mặc định
                                 if (sectionCount == 0)
                                 {
                                     string autoCreateSql = @"
@@ -218,24 +188,19 @@ namespace StudentInfoManagement.Views
 
                                     using (SqlCommand createCmd = new SqlCommand(autoCreateSql, conn))
                                     {
-                                        // Tạo mã lớp tự động: MãMôn + "_01" (VD: IT1_01)
                                         createCmd.Parameters.AddWithValue("@SecID", subjectId + "_01");
                                         createCmd.Parameters.AddWithValue("@SubId", subjectId);
-                                        createCmd.Parameters.AddWithValue("@Sem", "HK1"); // Mặc định HK1
-
-                                        // Lấy 1 giảng viên mặc định (hoặc để NULL)
-                                        // Ở đây mình để NULL để tránh lỗi nếu chưa có giảng viên
+                                        createCmd.Parameters.AddWithValue("@Sem", "HK1");
                                         createCmd.Parameters.AddWithValue("@LecID", DBNull.Value);
 
                                         createCmd.ExecuteNonQuery();
-
                                         MessageBox.Show($"Đã tự động tạo lớp học phần '{subjectId}_01' để sinh viên có thể đăng ký.", "Thông báo hệ thống");
                                     }
                                 }
                             }
                         }
 
-                        LoadDataFromDB(); // Tải lại giao diện
+                        LoadDataFromDB();
                     }
                     catch (Exception ex)
                     {
