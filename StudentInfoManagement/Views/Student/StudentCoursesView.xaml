@@ -80,7 +80,7 @@
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Lọc theo Khoa" Style="{StaticResource FilterLabelStyle}"/>
                         <ComboBox x:Name="cboDepartmentFilter" Style="{StaticResource CleanComboBoxStyle}" SelectionChanged="cboDepartmentFilter_SelectionChanged" >
-                            <!-- Updated to match the string checked in code -->
+            
                             <ComboBoxItem Content="Tất cả các khoa" IsSelected="True"/>
                             <ComboBoxItem Content="Khoa CNTT"/>
                             <ComboBoxItem Content="Khoa Kinh Tế"/>

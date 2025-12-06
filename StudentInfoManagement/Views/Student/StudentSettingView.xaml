@@ -8,7 +8,7 @@
              FontFamily="Segoe UI">
 
     <UserControl.Resources>
-        <!-- Style Card -->
+        
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="8"/>
@@ -21,7 +21,7 @@
             </Setter>
         </Style>
 
-        <!-- Style Label -->
+        
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -29,7 +29,6 @@
             <Setter Property="Margin" Value="0,0,0,5"/>
         </Style>
 
-        <!-- Style TextBox (Read Only sẽ có màu xám) -->
         <Style x:Key="InputStyle" TargetType="TextBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0"/>
@@ -48,7 +47,7 @@
                             <Trigger Property="IsKeyboardFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="#2563EB"/>
                             </Trigger>
-                            <!-- Tự động chuyển màu xám khi bị khóa -->
+     
                             <Trigger Property="IsReadOnly" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#F9FAFB"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="#E5E7EB"/>
@@ -60,7 +59,6 @@
             </Setter>
         </Style>
 
-        <!-- Style PasswordBox -->
         <Style x:Key="PasswordStyle" TargetType="PasswordBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0"/>
@@ -88,13 +86,13 @@
     <Grid Background="#F9FAFB" Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
-            <!-- Cột Trái -->
+
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
-            <!-- Cột Phải -->
+
         </Grid.ColumnDefinitions>
 
-        <!-- 1. CỘT TRÁI: PROFILE CARD -->
+
         <Border Grid.Column="0" Style="{StaticResource CardStyle}" VerticalAlignment="Top" Padding="20">
             <StackPanel>
                 <Border Width="100" Height="100" CornerRadius="50" Background="#EFF6FF" Margin="0,0,0,15" HorizontalAlignment="Center">
@@ -117,11 +115,10 @@
             </StackPanel>
         </Border>
 
-        <!-- 2. CỘT PHẢI: FORM -->
+
         <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
-                <!-- PHẦN A: THÔNG TIN (READ ONLY) -->
                 <Border Style="{StaticResource CardStyle}" Padding="25" Margin="0,0,0,20">
                     <StackPanel>
                         <Grid Margin="0,0,0,20">
@@ -130,7 +127,6 @@
                                 <TextBlock Text="Thông tin cá nhân được quản lý bởi nhà trường." FontSize="14" Foreground="#6B7280"/>
                             </StackPanel>
 
-                            <!-- Nút Lưu ĐÃ ẨN vì sinh viên không được sửa -->
                             <Button x:Name="btnSaveInfo" Content="Lưu Thay Đổi" Visibility="Collapsed"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Width="120" Height="40"
                                     Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
@@ -148,8 +144,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Tất cả TextBox đều có IsReadOnly="True" -->
-
+        
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,15">
                                 <TextBlock Text="Mã Sinh Viên" Style="{StaticResource LabelStyle}"/>
                                 <TextBox x:Name="txtID" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
@@ -183,13 +178,12 @@
                             <TextBox x:Name="txtAddress" Style="{StaticResource InputStyle}" IsReadOnly="True"/>
                         </StackPanel>
 
-                        <!-- Dòng thông báo nhỏ -->
+            
                         <TextBlock Text="* Nếu thông tin sai sót, vui lòng liên hệ Phòng Công tác Sinh viên." 
                                    Foreground="#DC2626" FontStyle="Italic" FontSize="12" Margin="0,15,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- PHẦN B: ĐỔI MẬT KHẨU (Editable) -->
                 <Border Style="{StaticResource CardStyle}" Padding="25">
                     <StackPanel>
                         <TextBlock Text="Bảo mật" FontSize="18" FontWeight="Bold" Margin="0,0,0,5"/>

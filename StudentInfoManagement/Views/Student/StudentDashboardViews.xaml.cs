@@ -4,7 +4,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input; // Cần thêm cái này cho MouseButtonEventArgs
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace StudentInfoManagement.Views.Student
@@ -106,15 +106,12 @@ namespace StudentInfoManagement.Views.Student
 
         private void NotificationItem_Click(object sender, MouseButtonEventArgs e)
         {
-            // Lấy Border được click
             if (sender is Border border && border.DataContext is NotificationModel noti)
             {
-                // Đổ dữ liệu vào Popup
+        
                 lblDetailTitle.Text = noti.Title;
                 lblDetailContent.Text = noti.Content;
                 lblDetailDate.Text = noti.DateDisplay;
-
-                // Hiện Popup
                 OverlayDetail.Visibility = Visibility.Visible;
             }
         }
@@ -124,13 +121,13 @@ namespace StudentInfoManagement.Views.Student
             OverlayDetail.Visibility = Visibility.Collapsed;
         }
 
-        // Bấm ra ngoài vùng đen để đóng
+
         private void Overlay_Click(object sender, MouseButtonEventArgs e)
         {
             OverlayDetail.Visibility = Visibility.Collapsed;
         }
 
-        // Chặn sự kiện click để không bị đóng khi bấm vào nội dung trắng
+
         private void Popup_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
