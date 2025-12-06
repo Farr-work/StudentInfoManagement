@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SqlClient;
+using System.Data;
+using Microsoft.Data.SqlClient; // Dùng thư viện mới
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,34 +10,29 @@ using System.Windows.Media;
 
 namespace StudentInfoManagement.Views.Student
 {
-    /// <summary>
-    /// Model đại diện cho một lớp học hiển thị trên giao diện
-    /// </summary>
     public class LopHocDisplay
     {
-        public string MaLop { get; set; }        // SubjectID
+        public string MaLop { get; set; }        // SectionID (Đã xử lý bỏ _AUTO)
+        public string MaLopGoc { get; set; }     // SectionID Gốc (Dùng để gửi xuống DB khi hủy)
         public string TenLop { get; set; }       // SubjectName
         public string ThoiGian { get; set; }     // Semester
         public string GiangVien { get; set; }    // LecturerName
-        public int SiSo { get; set; }            // Số lượng hiện tại (giả định)
-        public int MaxCapacity { get; set; }     // Số lượng tối đa
+        public int SiSo { get; set; }
+        public int MaxCapacity { get; set; }
 
-        // Thuộc tính hiển thị Sĩ số / MaxCapacity
         public string SiSoHienTai => $"{SiSo}/{MaxCapacity}";
 
-        // Giữ lại 2 thuộc tính này để XAML không bị lỗi, dù không dùng cho chức năng lúc này
-        public string TrangThaiText => "Xem chi tiết";
-      
+        // Màu nút Hủy (Đỏ)
+        public Brush ButtonColor => (Brush)new BrushConverter().ConvertFrom("#EF4444");
     }
 
     public partial class StudentClassesView : UserControl
     {
-        // Chuỗi kết nối SQL của bạn
-        // LƯU Ý: Thay thế bằng chuỗi kết nối thực tế của bạn.
         private const string ConnectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
         private ObservableCollection<LopHocDisplay> _danhSachLopGoc;
         private ObservableCollection<LopHocDisplay> _danhSachLopHienThi;
+        private string _currentStudentID;
 
         public StudentClassesView()
         {
@@ -44,36 +40,36 @@ namespace StudentInfoManagement.Views.Student
             _danhSachLopGoc = new ObservableCollection<LopHocDisplay>();
             _danhSachLopHienThi = new ObservableCollection<LopHocDisplay>();
 
-            // Gán nguồn dữ liệu cho ItemsControl
+            // Lấy ID thật
+            _currentStudentID = GlobalConfig.CurrentUserID;
             ListLop.ItemsSource = _danhSachLopHienThi;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // Tải dữ liệu khi UserControl được load
-            LoadClassesData();
+            if (string.IsNullOrEmpty(_currentStudentID)) _currentStudentID = "SV001"; // Fallback nếu lỗi
+            LoadRegisteredClasses();
         }
 
-        /// <summary>
-        /// Truy vấn dữ liệu lớp học từ cơ sở dữ liệu và lưu vào danh sách gốc.
-        /// </summary>
-        private void LoadClassesData()
+        private void LoadRegisteredClasses()
         {
             _danhSachLopGoc.Clear();
             _danhSachLopHienThi.Clear();
 
             string query = @"
-                SELECT
-                    Sub.SubjectID,
-                    Sub.SubjectName,
-                    S.Semester,
-                    L.LecturerName,
-                    S.MaxCapacity,
-                    -- Dùng 50% MaxCapacity làm sĩ số giả định, hoặc dùng 1 giá trị cố định
-                    CAST(S.MaxCapacity * 0.5 AS INT) AS SiSo 
-                FROM SECTIONS S
+                SELECT 
+                    S.SectionID,        
+                    Sub.SubjectName,    
+                    S.Semester,         
+                    ISNULL(L.LecturerName, 'Chưa phân công') AS LecturerName,
+                    ISNULL(S.MaxCapacity, 65) AS MaxCapacity,
+                    (SELECT COUNT(*) FROM REGISTRATIONS CountR WHERE CountR.SectionID = S.SectionID) AS CurrentSiSo
+                FROM REGISTRATIONS R
+                JOIN SECTIONS S ON R.SectionID = S.SectionID
                 JOIN SUBJECTS Sub ON S.SubjectID = Sub.SubjectID
-                JOIN LECTURERS L ON S.LecturerID = L.LecturerID;
+                LEFT JOIN LECTURERS L ON S.LecturerID = L.LecturerID
+                WHERE R.masv = @StudentID
+                ORDER BY S.Semester DESC, Sub.SubjectName ASC
             ";
 
             try
@@ -83,39 +79,84 @@ namespace StudentInfoManagement.Views.Student
                     connection.Open();
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@StudentID", _currentStudentID);
+
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
+                                string sectionIDRaw = reader["SectionID"].ToString();
+
+                                // LOGIC SỬA: Xóa đuôi _AUTO để hiển thị đẹp hơn
+                                string sectionIDDisplay = sectionIDRaw.Replace("_AUTO", "");
+
                                 _danhSachLopGoc.Add(new LopHocDisplay
                                 {
-                                    MaLop = reader.GetString(0),
-                                    TenLop = reader.GetString(1),
-                                    ThoiGian = reader.GetString(2),
-                                    GiangVien = reader.GetString(3),
-                                    MaxCapacity = reader.GetInt32(4),
-                                    SiSo = reader.GetInt32(5)
+                                    MaLopGoc = sectionIDRaw,      // Giữ lại ID gốc để dùng khi xóa
+                                    MaLop = sectionIDDisplay,     // ID để hiển thị
+                                    TenLop = reader["SubjectName"].ToString(),
+                                    ThoiGian = reader["Semester"].ToString(),
+                                    GiangVien = reader["LecturerName"].ToString(),
+                                    MaxCapacity = Convert.ToInt32(reader["MaxCapacity"]),
+                                    SiSo = Convert.ToInt32(reader["CurrentSiSo"])
                                 });
                             }
                         }
                     }
                 }
 
-                // Hiển thị tất cả dữ liệu vừa load
-                foreach (var lop in _danhSachLopGoc)
-                {
-                    _danhSachLopHienThi.Add(lop);
-                }
+                foreach (var lop in _danhSachLopGoc) _danhSachLopHienThi.Add(lop);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu lớp học: {ex.Message}", "Lỗi kết nối CSDL", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        /// <summary>
-        /// Xử lý sự kiện TextChanged của TextBox tìm kiếm để lọc dữ liệu.
-        /// </summary>
+        // --- HÀM XỬ LÝ HỦY MÔN ---
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            if (btn == null || btn.Tag == null) return;
+
+            // Lấy SectionID GỐC (có chứa _AUTO nếu có) để tìm trong DB
+            string sectionIdToDelete = btn.Tag.ToString();
+
+            if (MessageBox.Show($"Bạn có chắc chắn muốn hủy môn học này không?", "Xác nhận hủy", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    try
+                    {
+                        conn.Open();
+                        // Xóa bản ghi trong bảng REGISTRATIONS
+                        string sql = "DELETE FROM REGISTRATIONS WHERE masv = @MaSV AND SectionID = @SecID";
+
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@MaSV", _currentStudentID);
+                            cmd.Parameters.AddWithValue("@SecID", sectionIdToDelete);
+
+                            int rows = cmd.ExecuteNonQuery();
+                            if (rows > 0)
+                            {
+                                MessageBox.Show("Đã hủy môn học thành công!", "Thông báo");
+                                LoadRegisteredClasses(); // Tải lại danh sách
+                            }
+                            else
+                            {
+                                MessageBox.Show("Không thể hủy môn học. Có thể bạn chưa đăng ký môn này.", "Lỗi");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi hệ thống: " + ex.Message);
+                    }
+                }
+            }
+        }
+
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             FilterClasses();
@@ -124,29 +165,20 @@ namespace StudentInfoManagement.Views.Student
         private void FilterClasses()
         {
             string searchText = txtSearch.Text.Trim();
-
             _danhSachLopHienThi.Clear();
 
             if (string.IsNullOrEmpty(searchText))
             {
-                // Nếu không có tìm kiếm, hiển thị danh sách gốc
-                foreach (var lop in _danhSachLopGoc)
-                {
-                    _danhSachLopHienThi.Add(lop);
-                }
+                foreach (var lop in _danhSachLopGoc) _danhSachLopHienThi.Add(lop);
             }
             else
             {
-                // Lọc theo TenLop (Tên môn học) hoặc MaLop (Mã môn học)
                 var filteredList = _danhSachLopGoc.Where(l =>
                     l.TenLop.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
                     l.MaLop.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
                 ).ToList();
 
-                foreach (var lop in filteredList)
-                {
-                    _danhSachLopHienThi.Add(lop);
-                }
+                foreach (var lop in filteredList) _danhSachLopHienThi.Add(lop);
             }
         }
     }

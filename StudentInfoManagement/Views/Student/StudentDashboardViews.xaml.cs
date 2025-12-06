@@ -1,121 +1,139 @@
-﻿using StudentInfoManagement; // Namespace chứa DatabaseHelper và GlobalConfig
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
+using Microsoft.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input; // Cần thêm cái này cho MouseButtonEventArgs
 using System.Windows.Threading;
 
 namespace StudentInfoManagement.Views.Student
 {
-    // Lớp Model cho ItemsControl (Giữ nguyên cấu trúc để XAML không lỗi)
-    public class SubjectDisplayModel
+    public class NotificationModel
     {
-        public string SubjectCode { get; set; }
-        public string SubjectName { get; set; }
-        public string Lecturer { get; set; }
-        public string Credits { get; set; }
-        public string Room { get; set; } = "TBD";
-        public string ScheduleTime { get; set; } = "Thứ X, Tiết Y-Z";
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string DateDisplay => CreatedAt.ToString("dd/MM/yyyy HH:mm");
     }
 
-    /// <summary>
-    /// Interaction logic for DashboardView.xaml
-    /// </summary>
     public partial class StudentDashboardViews : UserControl
     {
-        private readonly DatabaseHelper _dbHelper = new DatabaseHelper();
+        private const string ConnectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
+        private string _currentStudentID;
 
         public StudentDashboardViews()
         {
             InitializeComponent();
+            _currentStudentID = GlobalConfig.CurrentUserID;
+            if (string.IsNullOrEmpty(_currentStudentID)) _currentStudentID = "SV001";
 
-            // Dùng Dispatcher để đảm bảo control đã được load
-            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
-            {
-                // Gọi hàm quan trọng nhất
-                LoadStudentProfile();
-
-                // Gọi các hàm khác với dữ liệu giả lập/mặc định (chưa cần xử lý DB chi tiết)
-                LoadCreditProgress();
-                LoadCurrentSubjects();
-            }));
+            this.Loaded += (s, e) => LoadAllData();
         }
 
-        // ===============================================
-        // A. Tải thông tin Hồ sơ Sinh viên (Profile Card)
-        // Dùng masv, hoten, tenlop từ GlobalConfig và DatabaseHelper
-        // ===============================================
+        private void LoadAllData()
+        {
+            LoadStudentProfile();
+            LoadNotifications();
+        }
+
         private void LoadStudentProfile()
         {
-            // Use the login username (masv) stored in CurrentUsername to fetch Student table
-            string studentID = GlobalConfig.CurrentUsername;
-
-            if (string.IsNullOrEmpty(studentID))
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                txtStudentName.Text = "Không xác định";
-                txtStudentID.Text = "Đăng nhập lại";
-                return;
-            }
-
-            try
-            {
-                // Dùng phương thức GetStudentInfo đã có trong DatabaseHelper
-                DataTable dt = _dbHelper.GetStudentInfo(studentID);
-
-                if (dt.Rows.Count > 0)
+                try
                 {
-                    DataRow row = dt.Rows[0];
-
-                    // Điền thông tin Profile Card (Từ bảng Student)
-                    txtStudentName.Text = row["hoten"].ToString();
-                    txtStudentID.Text = studentID;
-                    txtClass.Text = row["tenlop"].ToString();
-
+                    conn.Open();
+                    string sql = "SELECT hoten, tenlop FROM Student WHERE masv = @ID";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", _currentStudentID);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                txtStudentName.Text = reader["hoten"].ToString();
+                                txtStudentID.Text = $"MSSV: {_currentStudentID}";
+                                txtClass.Text = $"Lớp: {reader["tenlop"]}";
+                            }
+                            else
+                            {
+                                txtStudentName.Text = "Không tìm thấy sinh viên";
+                            }
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    txtStudentName.Text = "Không tìm thấy dữ liệu!";
-                    txtStudentID.Text = studentID;
+                    txtStudentName.Text = "Lỗi kết nối";
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi tải thông tin cá nhân: " + ex.Message, "Lỗi Database");
             }
         }
 
-        // ===============================================
-        // B. Tải danh sách Môn học đang học (Dữ liệu giả lập)
-        // ===============================================
-        private void LoadCurrentSubjects()
+        private void LoadNotifications()
         {
+            var list = new List<NotificationModel>();
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "SELECT TOP 20 Title, Content, CreatedAt FROM Notifications ORDER BY CreatedAt DESC";
 
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new NotificationModel
+                            {
+                                Title = reader["Title"].ToString(),
+                                Content = reader["Content"].ToString(),
+                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi tải thông báo: " + ex.Message);
+                }
+            }
+            icNotifications.ItemsSource = list;
         }
 
-        // ===============================================
-        // C. Tải Tiến độ Tín chỉ (Dữ liệu giả lập)
-        // ===============================================
-        private void LoadCreditProgress()
+        // --- XỬ LÝ CLICK XEM CHI TIẾT ---
+
+        private void NotificationItem_Click(object sender, MouseButtonEventArgs e)
         {
-            int creditsEarned = 85; // Giả lập
-            int creditsTotal = 130;  // Giả lập
-
-            double progress = (double)creditsEarned / creditsTotal;
-            int percent = (int)(progress * 100);
-
-            // Cập nhật TextBlocks
-            txtCreditsEarned.Text = creditsEarned.ToString();
-            txtCreditsTotal.Text = creditsTotal.ToString();
-            txtPercent.Text = $"Đã hoàn thành {percent}% chương trình";
-
-            // Cập nhật ProgressBar (Giả sử chiều rộng XAML là 300)
-            double maxWidth = 300;
-            if (progressBarCredits != null)
+            // Lấy Border được click
+            if (sender is Border border && border.DataContext is NotificationModel noti)
             {
-                progressBarCredits.Width = maxWidth * progress;
+                // Đổ dữ liệu vào Popup
+                lblDetailTitle.Text = noti.Title;
+                lblDetailContent.Text = noti.Content;
+                lblDetailDate.Text = noti.DateDisplay;
+
+                // Hiện Popup
+                OverlayDetail.Visibility = Visibility.Visible;
             }
+        }
+
+        private void BtnCloseDetail_Click(object sender, RoutedEventArgs e)
+        {
+            OverlayDetail.Visibility = Visibility.Collapsed;
+        }
+
+        // Bấm ra ngoài vùng đen để đóng
+        private void Overlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            OverlayDetail.Visibility = Visibility.Collapsed;
+        }
+
+        // Chặn sự kiện click để không bị đóng khi bấm vào nội dung trắng
+        private void Popup_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

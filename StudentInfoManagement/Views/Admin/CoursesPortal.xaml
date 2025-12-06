@@ -119,24 +119,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="5,0,5,15">
-            <TextBlock Text="Quản lý Đăng Ký Tín Chỉ" FontSize="26" FontWeight="Bold" Foreground="#111827"/>
-            <Button Content="+ Mở Lớp Mới" Click="BtnAddNew_Click"
-                    HorizontalAlignment="Right"
-                    Background="#2563EB" Foreground="White" BorderThickness="0" 
-                    Padding="15,8" FontWeight="SemiBold" Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="bdr" Background="{TemplateBinding Background}" CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bdr" Property="Background" Value="#1D4ED8"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <TextBlock Text="Cổng Thông Tin Môn Học" FontSize="26" FontWeight="Bold" Foreground="#111827"/>
         </Grid>
 
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20" Margin="0,0,0,20">
@@ -147,13 +130,13 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="Tìm kiếm lớp học" Style="{StaticResource FilterLabelStyle}"/>
+                        <TextBlock Text="Tìm kiếm môn học" Style="{StaticResource FilterLabelStyle}"/>
                         <Border Height="40" CornerRadius="6" BorderBrush="#D1D5DB" BorderThickness="1" Background="White">
                             <Grid>
                                 <TextBlock Text="🔍" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#9CA3AF"/>
@@ -166,14 +149,17 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Lọc theo Học kỳ" Style="{StaticResource FilterLabelStyle}"/>
-                        <ComboBox x:Name="cbSemester" 
+                        <TextBlock Text="Lọc theo Khoa" Style="{StaticResource FilterLabelStyle}"/>
+
+                        <ComboBox x:Name="cbFilterDepartment" 
                                   Style="{StaticResource CleanComboBoxStyle}" 
-                                  SelectionChanged="OnFilterChanged" 
-                                  SelectedIndex="0">
-                            <ComboBoxItem Content="Tất cả học kỳ"/>
-                            <ComboBoxItem Content="HK1 2024-2025"/>
-                            <ComboBoxItem Content="HK2 2024-2025"/>
+                                  SelectedValuePath="DepartmentID"
+                                  SelectionChanged="OnFilterChanged">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DepartmentName}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
                         </ComboBox>
                     </StackPanel>
 
@@ -185,7 +171,7 @@
                                   SelectedIndex="0">
                             <ComboBoxItem Content="Tất cả"/>
                             <ComboBoxItem Content="Đang mở"/>
-                            <ComboBoxItem Content="Đã đầy"/>
+                            <ComboBoxItem Content="Đang đóng"/>
                         </ComboBox>
                     </StackPanel>
                 </Grid>
@@ -203,15 +189,15 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="2.5*"/>
-                        <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1.2*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Mã LHP" FontWeight="Bold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="0" Text="Mã Môn" FontWeight="Bold" Foreground="#6B7280"/>
                     <TextBlock Grid.Column="1" Text="Tên Môn Học" FontWeight="Bold" Foreground="#6B7280"/>
-                    <TextBlock Grid.Column="2" Text="Giảng Viên" FontWeight="Bold" Foreground="#6B7280"/>
-                    <TextBlock Grid.Column="3" Text="Sĩ Số" FontWeight="Bold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="2" Text="Khoa Quản Lý" FontWeight="Bold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="3" Text="Tín Chỉ" FontWeight="Bold" Foreground="#6B7280" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="4" Text="Trạng Thái" FontWeight="Bold" Foreground="#6B7280" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" Foreground="#6B7280" HorizontalAlignment="Center"/>
                 </Grid>
@@ -226,42 +212,40 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="1*"/>
                                             <ColumnDefinition Width="2.5*"/>
-                                            <ColumnDefinition Width="1.5*"/>
                                             <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
                                             <ColumnDefinition Width="1.2*"/>
                                             <ColumnDefinition Width="1*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="{Binding ClassID}" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding SubjectName}" FontWeight="Medium" Foreground="#111827"/>
-                                            <TextBlock Text="{Binding Schedule}" FontSize="12" Foreground="#6B7280"/>
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{Binding Lecturer}" VerticalAlignment="Center" Foreground="#4B5563"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding SubjectID}" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2563EB"/>
 
-                                        <Grid Grid.Column="3" VerticalAlignment="Center" Margin="0,0,20,0">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Grid Grid.Row="0" Margin="0,0,0,5">
-                                                <TextBlock Text="{Binding StudentCountDisplay}" FontSize="12" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding PercentageDisplay}" FontSize="12" Foreground="#6B7280" HorizontalAlignment="Right"/>
-                                            </Grid>
-                                            <ProgressBar Grid.Row="1" Height="8" Value="{Binding CurrentCount}" Maximum="{Binding MaxCount}" 
-                                                         Foreground="{Binding ProgressBarColor}" Background="#E5E7EB" BorderThickness="0"/>
-                                        </Grid>
+                                        <TextBlock Grid.Column="1" Text="{Binding SubjectName}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
 
-                                        <Border Grid.Column="4" Background="{Binding StatusBgColor}" CornerRadius="12" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Grid.Column="2" Text="{Binding DepartmentName}" VerticalAlignment="Center" Foreground="#4B5563"/>
+
+                                        <TextBlock Grid.Column="3" Text="{Binding Credits}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                        <Border Grid.Column="4" Background="{Binding StatusBgColor}" CornerRadius="12" Padding="12,4" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold" Foreground="{Binding StatusFgColor}"/>
                                         </Border>
 
-                                        <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <Button Content="✏️" Click="BtnEdit_Click" Tag="{Binding ClassID}" 
-                                                    Background="Transparent" BorderThickness="0" Margin="0,0,5,0" Cursor="Hand" ToolTip="Sửa"/>
-                                            <Button Content="🗑️" Click="BtnDelete_Click" Tag="{Binding ClassID}"
-                                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Xóa"/>
-                                        </StackPanel>
+                                        <Button Grid.Column="5" 
+                                                Content="{Binding ActionButtonText}" 
+                                                Tag="{Binding SubjectID}"
+                                                Click="BtnToggle_Click"
+                                                Width="80" Height="30"
+                                                Background="{Binding ActionButtonColor}" 
+                                                Foreground="White"
+                                                FontWeight="SemiBold"
+                                                BorderThickness="0" 
+                                                Cursor="Hand">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
