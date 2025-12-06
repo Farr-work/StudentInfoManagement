@@ -66,7 +66,51 @@ namespace StudentInfoManagement
 
             return role;
         }
+        public DataTable GetDataTable(string sql)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dt);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Ghi log lỗi nếu cần thiết
+                    System.Diagnostics.Debug.WriteLine("SQL Error: " + ex.Message);
+                }
+            }
+            return dt;
+        }
 
+        // 2. Phương thức thực thi lệnh (Insert/Update/Delete)
+        public bool ExecuteNonQuery(string sql, Action<SqlCommand> parameterize = null)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        parameterize?.Invoke(cmd); // Thêm tham số nếu có
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("SQL Error: " + ex.Message);
+                    throw ex; // Ném lỗi ra để View xử lý hiển thị MessageBox
+                }
+            }
+        }
         // --- 2. LẤY THÔNG TIN SINH VIÊN (GIỮ NGUYÊN) ---
         public DataTable GetStudentInfo(string studentID)
         {
