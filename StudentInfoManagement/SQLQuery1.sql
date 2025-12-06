@@ -129,3 +129,9 @@ CREATE TABLE Notifications (
 -- 11. Thêm cột cho bảng LECTURERS
 ALTER TABLE LECTURERS
 ADD PhoneNumber VARCHAR(15);
+
+-- 12. Thêm trạng thái ACTIVE cho môn học
+ALTER TABLE SUBJECTS ADD IsActive BIT DEFAULT 1;
+
+UPDATE SUBJECTS SET IsActive = 1 WHERE IsActive IS NULL;
+

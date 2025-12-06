@@ -1,64 +1,132 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.Data.SqlClient;
 
 namespace StudentInfoManagement.Views
 {
-    // 1. Tạo Model cho Lớp học phần
-    public class ClassSection
+    // Model cho Môn học với Logic hiển thị trạng thái
+    public class SubjectViewModel
     {
-        public string ClassID { get; set; }
+        public string SubjectID { get; set; }
         public string SubjectName { get; set; }
-        public string Schedule { get; set; }
-        public string Lecturer { get; set; }
-        public int CurrentCount { get; set; }
-        public int MaxCount { get; set; }
-        public string Semester { get; set; } // Dùng để lọc
+        public int Credits { get; set; }
+        public string DepartmentID { get; set; }
+        public string DepartmentName { get; set; }
 
-        // Các thuộc tính tính toán (chỉ để hiển thị)
-        public string StudentCountDisplay => $"{CurrentCount}/{MaxCount}";
-        public string PercentageDisplay => $"{(double)CurrentCount / MaxCount:P0}";
+        // Trạng thái từ Database (True = Đang mở, False = Đóng)
+        public bool IsActive { get; set; }
 
-        // Logic màu sắc thanh tiến độ
-        public Brush ProgressBarColor => IsFull ? Brushes.Red : (CurrentCount > MaxCount * 0.8 ? Brushes.Orange : Brushes.Blue);
+        // --- Logic hiển thị (Computed Properties) ---
 
-        // Logic Trạng thái
-        public bool IsFull => CurrentCount >= MaxCount;
-        public string StatusText => IsFull ? "Đã đầy" : "Đang mở";
-        public Brush StatusBgColor => IsFull ? (Brush)new BrushConverter().ConvertFrom("#FEE2E2") : (Brush)new BrushConverter().ConvertFrom("#DCFCE7");
-        public Brush StatusFgColor => IsFull ? Brushes.DarkRed : Brushes.DarkGreen;
+        // 1. Chữ hiển thị ở cột Trạng thái
+        public string StatusText => IsActive ? "Đang mở" : "Đang đóng";
+
+        // 2. Màu nền Badge trạng thái (Xanh lá / Xám đỏ)
+        public Brush StatusBgColor => IsActive ?
+            (Brush)new BrushConverter().ConvertFrom("#DCFCE7") : // Xanh nhạt
+            (Brush)new BrushConverter().ConvertFrom("#F3F4F6");  // Xám
+
+        // 3. Màu chữ Badge trạng thái
+        public Brush StatusFgColor => IsActive ? Brushes.DarkGreen : Brushes.Gray;
+
+        // 4. Chữ trên nút bấm (Ngược với trạng thái hiện tại)
+        public string ActionButtonText => IsActive ? "Đóng lớp" : "Mở lớp";
+
+        // 5. Màu nút bấm (Đỏ để đóng, Xanh để mở)
+        public Brush ActionButtonColor => IsActive ? Brushes.Red : Brushes.DodgerBlue;
     }
 
     public partial class CoursesPortal : UserControl
     {
-        // Danh sách gốc (Database giả lập)
-        private List<ClassSection> _allClasses;
+        private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
+
+        private List<SubjectViewModel> _allSubjects;
 
         public CoursesPortal()
         {
             InitializeComponent();
-            LoadDummyData();
-            ApplyFilters(); // Hiển thị dữ liệu lần đầu
+            LoadDepartments();
+            LoadDataFromDB();
         }
 
-        private void LoadDummyData()
+        // --- TẢI DỮ LIỆU ---
+        private void LoadDataFromDB()
         {
-            // Tạo dữ liệu mẫu
-            _allClasses = new List<ClassSection>
+            _allSubjects = new List<SubjectViewModel>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                new ClassSection { ClassID = "CS101-01", SubjectName = "Nhập môn Lập trình", Schedule = "Thứ 2, Tiết 1-3", Lecturer = "TS. Nguyễn Văn A", CurrentCount = 45, MaxCount = 50, Semester = "HK1" },
-                new ClassSection { ClassID = "CS101-02", SubjectName = "Nhập môn Lập trình", Schedule = "Thứ 3, Tiết 4-6", Lecturer = "ThS. Lê Thị B", CurrentCount = 10, MaxCount = 50, Semester = "HK1" },
-                new ClassSection { ClassID = "WEB202-01", SubjectName = "Lập trình Web Frontend", Schedule = "Thứ 4, Tiết 7-9", Lecturer = "TS. Phạm Văn C", CurrentCount = 60, MaxCount = 60, Semester = "HK1" }, // Đã đầy
-                new ClassSection { ClassID = "DB101-01", SubjectName = "Cơ sở dữ liệu", Schedule = "Thứ 5, Tiết 1-3", Lecturer = "ThS. Trần D", CurrentCount = 30, MaxCount = 60, Semester = "HK2" },
-                new ClassSection { ClassID = "ENG301-01", SubjectName = "Tiếng Anh chuyên ngành", Schedule = "Thứ 6, Tiết 1-3", Lecturer = "Ms. Sarah", CurrentCount = 55, MaxCount = 60, Semester = "HK1" },
-            };
+                try
+                {
+                    conn.Open();
+                    // SỬA CÂU SQL: Thêm s.DepartmentID vào SELECT
+                    string sql = @"
+                SELECT 
+                    s.SubjectID, 
+                    s.SubjectName, 
+                    s.Credits, 
+                    s.DepartmentID,  -- <-- Thêm dòng này
+                    ISNULL(d.DepartmentName, 'Chưa phân khoa') AS DepartmentName,
+                    ISNULL(s.IsActive, 0) AS IsActive 
+                FROM SUBJECTS s
+                LEFT JOIN DEPARTMENTS d ON s.DepartmentID = d.DepartmentID
+                ORDER BY s.SubjectName";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            _allSubjects.Add(new SubjectViewModel
+                            {
+                                SubjectID = reader["SubjectID"].ToString(),
+                                SubjectName = reader["SubjectName"].ToString(),
+                                Credits = Convert.ToInt32(reader["Credits"]),
+
+                                // --- THÊM DÒNG NÀY ---
+                                DepartmentID = reader["DepartmentID"]?.ToString(),
+                                // ---------------------
+
+                                DepartmentName = reader["DepartmentName"].ToString(),
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
+                }
+            }
+            ApplyFilters();
+        }
+        private void LoadDepartments()
+        {
+            try
+            {
+                DataTable dt = new DataTable();
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT DepartmentID, DepartmentName FROM DEPARTMENTS", conn);
+                    da.Fill(dt);
+                }
+                DataRow dr = dt.NewRow();
+                dr["DepartmentID"] = "ALL";
+                dr["DepartmentName"] = "--- Tất cả các khoa ---";
+                dt.Rows.InsertAt(dr, 0);
+
+                cbFilterDepartment.ItemsSource = dt.DefaultView;
+                cbFilterDepartment.SelectedIndex = 0;
+            }
+            catch { }
         }
 
-        // --- LOGIC LỌC DỮ LIỆU ---
+        // --- BỘ LỌC ---
         private void OnFilterChanged(object sender, RoutedEventArgs e)
         {
             ApplyFilters();
@@ -66,68 +134,113 @@ namespace StudentInfoManagement.Views
 
         private void ApplyFilters()
         {
-            if (_allClasses == null) return;
+            if (_allSubjects == null) return;
 
-            // 1. Lấy giá trị từ các ô nhập liệu
             string keyword = txtSearch.Text.ToLower();
 
-            // Lấy text từ ComboBox (xử lý null safe)
-            string selectedSemester = (cbSemester.SelectedItem as ComboBoxItem)?.Content.ToString();
+            // Lấy Mã khoa đang chọn từ ComboBox
+            string selectedDeptID = cbFilterDepartment.SelectedValue?.ToString();
+
             string selectedStatus = (cbStatus.SelectedItem as ComboBoxItem)?.Content.ToString();
 
-            // 2. Thực hiện lọc dùng LINQ
-            var filteredList = _allClasses.Where(c =>
+            var filteredList = _allSubjects.Where(s =>
             {
-                // Lọc theo từ khóa (Mã lớp hoặc Tên môn)
                 bool matchKeyword = string.IsNullOrEmpty(keyword) ||
-                                    c.ClassID.ToLower().Contains(keyword) ||
-                                    c.SubjectName.ToLower().Contains(keyword);
+                                    s.SubjectID.ToLower().Contains(keyword) ||
+                                    s.SubjectName.ToLower().Contains(keyword);
 
-                // Lọc theo Học kỳ
-                bool matchSemester = selectedSemester == "Tất cả học kỳ" ||
-                                     (selectedSemester.Contains("HK1") && c.Semester == "HK1") ||
-                                     (selectedSemester.Contains("HK2") && c.Semester == "HK2");
+                // --- SỬA LẠI LOGIC LỌC KHOA ---
+                // Nếu chọn "ALL" hoặc null -> Lấy hết.
+                // Ngược lại -> So sánh Mã khoa của môn học (s.DepartmentID) với Mã khoa đã chọn.
+                bool matchDept = string.IsNullOrEmpty(selectedDeptID) ||
+                                 selectedDeptID == "ALL" ||
+                                 s.DepartmentID == selectedDeptID;
+                // ------------------------------
 
-                // Lọc theo Trạng thái
                 bool matchStatus = selectedStatus == "Tất cả" ||
-                                   (selectedStatus == "Đã đầy" && c.IsFull) ||
-                                   (selectedStatus == "Đang mở" && !c.IsFull);
+                                   (selectedStatus == "Đang mở" && s.IsActive) ||
+                                   (selectedStatus == "Đang đóng" && !s.IsActive);
 
-                return matchKeyword && matchSemester && matchStatus;
+                return matchKeyword && matchDept && matchStatus;
             }).ToList();
 
-            // 3. Gán dữ liệu đã lọc vào ItemsControl
             icClassList.ItemsSource = filteredList;
         }
-
-        // --- LOGIC NÚT BẤM ---
-        private void BtnAddNew_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Chức năng Mở Lớp Mới đang được phát triển!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void BtnEdit_Click(object sender, RoutedEventArgs e)
-        {
-            // Lấy Mã lớp từ thuộc tính Tag của nút bấm
-            var btn = sender as Button;
-            string classId = btn.Tag.ToString();
-            MessageBox.Show($"Bạn đang muốn sửa lớp: {classId}", "Edit Action");
-        }
-
-        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        // --- XỬ LÝ NÚT BẬT/TẮT (TOGGLE) ---
+        // --- XỬ LÝ NÚT BẬT/TẮT (TOGGLE) + TỰ ĐỘNG TẠO LỚP ---
+        private void BtnToggle_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            string classId = btn.Tag.ToString();
+            if (btn == null) return;
 
-            var result = MessageBox.Show($"Bạn có chắc muốn xóa lớp {classId}?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result == MessageBoxResult.Yes)
+            string subjectId = btn.Tag.ToString();
+
+            var subject = _allSubjects.FirstOrDefault(s => s.SubjectID == subjectId);
+            if (subject == null) return;
+
+            bool newStatus = !subject.IsActive;
+            string actionName = newStatus ? "Mở" : "Đóng";
+
+            if (MessageBox.Show($"Bạn có chắc muốn {actionName} đăng ký cho môn {subject.SubjectName}?",
+                                "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                // Xóa khỏi danh sách nguồn và cập nhật lại UI
-                var itemToRemove = _allClasses.FirstOrDefault(x => x.ClassID == classId);
-                if (itemToRemove != null)
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    _allClasses.Remove(itemToRemove);
-                    ApplyFilters(); // Refresh lại danh sách
+                    try
+                    {
+                        conn.Open();
+
+                        // 1. Cập nhật trạng thái Môn học
+                        string updateSql = "UPDATE SUBJECTS SET IsActive = @Status WHERE SubjectID = @Id";
+                        using (SqlCommand cmd = new SqlCommand(updateSql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Status", newStatus);
+                            cmd.Parameters.AddWithValue("@Id", subjectId);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // 2. LOGIC TỰ ĐỘNG TẠO LỚP (Nếu đang MỞ và CHƯA CÓ LỚP)
+                        if (newStatus == true)
+                        {
+                            // Kiểm tra xem môn này đã có lớp nào trong bảng SECTIONS chưa
+                            string checkSectionSql = "SELECT COUNT(*) FROM SECTIONS WHERE SubjectID = @SubId";
+                            using (SqlCommand checkCmd = new SqlCommand(checkSectionSql, conn))
+                            {
+                                checkCmd.Parameters.AddWithValue("@SubId", subjectId);
+                                int sectionCount = (int)checkCmd.ExecuteScalar();
+
+                                // Nếu chưa có lớp nào -> Tự động tạo lớp mặc định
+                                if (sectionCount == 0)
+                                {
+                                    string autoCreateSql = @"
+                                        INSERT INTO SECTIONS (SectionID, SubjectID, Semester, LecturerID, MaxCapacity)
+                                        VALUES (@SecID, @SubId, @Sem, @LecID, 65)"; // Mặc định 65 người
+
+                                    using (SqlCommand createCmd = new SqlCommand(autoCreateSql, conn))
+                                    {
+                                        // Tạo mã lớp tự động: MãMôn + "_01" (VD: IT1_01)
+                                        createCmd.Parameters.AddWithValue("@SecID", subjectId + "_01");
+                                        createCmd.Parameters.AddWithValue("@SubId", subjectId);
+                                        createCmd.Parameters.AddWithValue("@Sem", "HK1"); // Mặc định HK1
+
+                                        // Lấy 1 giảng viên mặc định (hoặc để NULL)
+                                        // Ở đây mình để NULL để tránh lỗi nếu chưa có giảng viên
+                                        createCmd.Parameters.AddWithValue("@LecID", DBNull.Value);
+
+                                        createCmd.ExecuteNonQuery();
+
+                                        MessageBox.Show($"Đã tự động tạo lớp học phần '{subjectId}_01' để sinh viên có thể đăng ký.", "Thông báo hệ thống");
+                                    }
+                                }
+                            }
+                        }
+
+                        LoadDataFromDB(); // Tải lại giao diện
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi cập nhật: " + ex.Message);
+                    }
                 }
             }
         }

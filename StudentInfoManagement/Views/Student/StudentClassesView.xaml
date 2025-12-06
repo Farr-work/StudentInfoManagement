@@ -206,14 +206,25 @@
                                     <TextBlock Grid.Column="1" Text="{Binding TenLop}"/>
                                     <TextBlock Grid.Column="2" Text="{Binding ThoiGian}"/>
                                     <TextBlock Grid.Column="3" Text="{Binding GiangVien}"/>
-                                    <TextBlock Grid.Column="4" Text="{Binding SiSo}" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding SiSoHienTai}" HorizontalAlignment="Center"/>
 
                                     <Button Grid.Column="5"
-                                            Content="Đăng Kí"
+                                            Content="Hủy môn"
                                             
+                                            Tag="{Binding MaLopGoc}"  Click="BtnCancel_Click"
+                                            Background="{Binding ButtonColor}"
                                             Foreground="White"
                                             Padding="8,3" Width="90"
-                                            HorizontalAlignment="Center"/>
+                                            BorderThickness="0"
+                                            FontWeight="Bold"
+                                            Cursor="Hand"
+                                            HorizontalAlignment="Center">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="4"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

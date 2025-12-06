@@ -38,6 +38,7 @@ namespace StudentInfoManagement
                     // Lưu ID vào biến toàn cục để dùng ở màn hình khác
                     // (Dù trong DatabaseHelper đã gán rồi, gán lại ở đây cho chắc chắn logic)
                     GlobalConfig.CurrentUserID = userId;
+                    GlobalConfig.CurrentUserID = txtUsername.Text;
 
                     this.Hide();
 
