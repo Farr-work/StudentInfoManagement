@@ -16,7 +16,7 @@ namespace StudentInfoManagement.Views
         {
             InitializeComponent();
 
-            // QUAN TRỌNG: Load lại dữ liệu mỗi khi View được hiển thị
+            // Load lại dữ liệu mỗi khi View được hiển thị
             this.Loaded += DashboardView_Loaded;
         }
 
@@ -32,7 +32,6 @@ namespace StudentInfoManagement.Views
             LoadActivities();
         }
 
-        // --- 1. LOGIC THỐNG KÊ ---
         private void LoadStatistics()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -45,7 +44,7 @@ namespace StudentInfoManagement.Views
                     txtGraduated.Text = GetCount(conn, "SELECT COUNT(*) FROM Student WHERE trangthai = N'Tốt nghiệp'").ToString();
                     txtDropout.Text = GetCount(conn, "SELECT COUNT(*) FROM Student WHERE trangthai = N'Thôi học'").ToString();
                 }
-                catch { /* Xử lý lỗi kết nối nếu cần */ }
+                catch { /* */ }
             }
         }
 
@@ -58,7 +57,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- 2. LOGIC THÔNG BÁO ---
         private void LoadNotifications()
         {
             pnlNotifications.Children.Clear();
@@ -105,7 +103,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- 3. LOGIC HOẠT ĐỘNG ---
         private void LoadActivities()
         {
             pnlActivities.Children.Clear();
@@ -163,7 +160,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- CÁC HÀM XỬ LÝ SỰ KIỆN GIAO DIỆN ---
         private void BtnAddNoti_Click(object sender, RoutedEventArgs e)
         {
             txtNotiTitle.Text = "";
@@ -193,7 +189,6 @@ namespace StudentInfoManagement.Views
                 {
                     conn.Open();
 
-                    // A. Thêm Thông báo
                     string insertSql = "INSERT INTO Notifications (Title, Content, CreatedAt) VALUES (@Title, @Content, GETDATE())";
                     using (SqlCommand cmd = new SqlCommand(insertSql, conn))
                     {
@@ -202,11 +197,9 @@ namespace StudentInfoManagement.Views
                         cmd.ExecuteNonQuery();
                     }
 
-                    // B. Xóa thông báo cũ
                     string cleanSql = "DELETE FROM Notifications WHERE Id NOT IN (SELECT TOP 5 Id FROM Notifications ORDER BY CreatedAt DESC)";
                     using (SqlCommand cmd = new SqlCommand(cleanSql, conn)) cmd.ExecuteNonQuery();
 
-                    // C. Log Activity
                     string logSql = "INSERT INTO ActivityLog (ActionName, CreatedAt) VALUES (@Action, GETDATE())";
                     using (SqlCommand cmd = new SqlCommand(logSql, conn))
                     {

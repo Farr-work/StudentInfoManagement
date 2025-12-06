@@ -8,7 +8,6 @@
              Background="White">
 
     <UserControl.Resources>
-        <!-- Style TextBox -->
         <Style TargetType="TextBox" x:Key="ModalTextBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0"/>
@@ -27,7 +26,6 @@
             </Setter>
         </Style>
 
-        <!-- Style ComboBox -->
         <Style TargetType="ComboBox" x:Key="ModalInputComboBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0,0,0"/>
@@ -38,7 +36,6 @@
             <Setter Property="Background" Value="White"/>
         </Style>
 
-        <!-- Style Buttons -->
         <Style x:Key="BtnCancelStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="#6C757D"/>

@@ -11,10 +11,8 @@ namespace StudentInfoManagement.Views
 {
     public partial class CoursesView : UserControl
     {
-        // Chuỗi kết nối
         private readonly string _connectionString = "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
-        // Biến xác định trạng thái: false = Thêm mới, true = Chỉnh sửa
         private bool _isEditMode = false;
 
         public CoursesView()
@@ -32,7 +30,6 @@ namespace StudentInfoManagement.Views
             }
         }
 
-        // --- 1. TẢI DỮ LIỆU ---
         private void LoadData()
         {
             string sql = @"
@@ -60,10 +57,8 @@ namespace StudentInfoManagement.Views
             string sql = "SELECT DepartmentID, DepartmentName FROM DEPARTMENTS";
             DataTable dt = GetDataTable(sql);
 
-            // Gán cho ComboBox trong Modal Thêm/Sửa
             cbDepartment.ItemsSource = dt.DefaultView;
 
-            // Gán cho ComboBox Lọc
             DataTable dtFilter = dt.Copy();
             DataRow row = dtFilter.NewRow();
             row["DepartmentID"] = "ALL";
@@ -96,7 +91,6 @@ namespace StudentInfoManagement.Views
             return dt;
         }
 
-        // --- 2. LOGIC LỌC DỮ LIỆU ---
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e) { ApplyFilters(); }
         private void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e) { ApplyFilters(); }
 
@@ -129,21 +123,16 @@ namespace StudentInfoManagement.Views
             try { dv.RowFilter = filter; } catch (Exception ex) { Debug.WriteLine(ex.Message); }
         }
 
-        // --- 3. CÁC SỰ KIỆN NÚT BẤM ---
-
-        // Mở Modal để THÊM MỚI
         private void BtnOpenAddModal_Click(object sender, RoutedEventArgs e)
         {
             if (ModalAddCourse == null) return;
 
-            // QUAN TRỌNG: Đặt lại trạng thái là Thêm mới
             _isEditMode = false;
 
-            // Xóa trắng form và MỞ KHÓA ô Mã môn học
             if (txtCourseCode != null)
             {
                 txtCourseCode.Text = "";
-                txtCourseCode.IsEnabled = true; // Cho phép nhập
+                txtCourseCode.IsEnabled = true;
             }
 
             if (txtCourseName != null) txtCourseName.Text = "";
@@ -154,22 +143,18 @@ namespace StudentInfoManagement.Views
             ModalAddCourse.Visibility = Visibility.Visible;
         }
 
-        // Mở Modal để SỬA (Mới thêm)
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
             if (ModalAddCourse == null) return;
 
-            // Lấy dòng dữ liệu từ nút bấm
             if (sender is Button btn && btn.DataContext is DataRowView row)
             {
-                // 1. Chuyển sang chế độ Edit
                 _isEditMode = true;
 
-                // 2. Điền dữ liệu cũ vào các ô
                 if (txtCourseCode != null)
                 {
                     txtCourseCode.Text = row["CourseCode"].ToString();
-                    txtCourseCode.IsEnabled = false; // KHÔNG cho sửa Mã môn học (Khóa chính)
+                    txtCourseCode.IsEnabled = false;
                 }
 
                 if (txtCourseName != null)
@@ -182,9 +167,8 @@ namespace StudentInfoManagement.Views
                     cbSemester.Text = row["Semester"].ToString();
 
                 if (cbDepartment != null)
-                    cbDepartment.SelectedValue = row["DepartmentID"]; // Chọn đúng khoa
+                    cbDepartment.SelectedValue = row["DepartmentID"];
 
-                // 3. Hiện Modal
                 ModalAddCourse.Visibility = Visibility.Visible;
             }
         }
@@ -195,7 +179,6 @@ namespace StudentInfoManagement.Views
                 ModalAddCourse.Visibility = Visibility.Collapsed;
         }
 
-        // Nút Lưu (Dùng chung cho cả Thêm và Sửa)
         private void BtnSaveCourse_Click(object sender, RoutedEventArgs e)
         {
             if (txtCourseCode == null || txtCourseName == null || cbDepartment == null || txtCredits == null) return;
@@ -232,19 +215,15 @@ namespace StudentInfoManagement.Views
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = conn;
 
-                    // --- PHÂN BIỆT LOGIC THÊM VÀ SỬA ---
                     if (_isEditMode)
                     {
-                        // SỬA: Dùng lệnh UPDATE, dùng WHERE theo ID
                         cmd.CommandText = "UPDATE SUBJECTS SET SubjectName = @Name, Credits = @Cred, Semester = @Seme, DepartmentID = @Dept WHERE SubjectID = @ID";
                     }
                     else
                     {
-                        // THÊM: Dùng lệnh INSERT
                         cmd.CommandText = "INSERT INTO SUBJECTS (SubjectID, SubjectName, Credits, Semester, DepartmentID) VALUES (@ID, @Name, @Cred, @Seme, @Dept)";
                     }
 
-                    // Truyền tham số
                     cmd.Parameters.AddWithValue("@ID", id);
                     cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Cred", credits);
@@ -256,7 +235,7 @@ namespace StudentInfoManagement.Views
                     MessageBox.Show(_isEditMode ? "Cập nhật thành công!" : "Thêm môn học thành công!");
 
                     if (ModalAddCourse != null) ModalAddCourse.Visibility = Visibility.Collapsed;
-                    LoadData(); // Load lại bảng
+                    LoadData();
                 }
                 catch (SqlException ex)
                 {
