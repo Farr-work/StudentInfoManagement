@@ -8,6 +8,8 @@ namespace StudentInfoManagement
     public static class GlobalConfig
     {
         public static string CurrentUserID { get; set; } = string.Empty;
+        // Add CurrentUsername to store the login username (for students it's masv)
+        public static string CurrentUsername { get; set; } = string.Empty;
     }
 
     public class DatabaseHelper
@@ -53,8 +55,11 @@ namespace StudentInfoManagement
                                 // LƯU Ý: Cột trong SQL phải tên là 'UserID'. Nếu là 'Id' thì sửa dòng dưới thành ["Id"]
                                 userId = reader["UserID"].ToString();
 
-                                // Cập nhật luôn GlobalConfig cũ cho an toàn (tương thích ngược)
+                                // Cập nhật GlobalConfig:
+                                // - CurrentUserID giữ numeric DB user id (string form) — used by admin/change-password logic
+                                // - CurrentUsername giữ the login username (for students this is MaSV) — used to fetch Student info        
                                 GlobalConfig.CurrentUserID = userId;
+                                GlobalConfig.CurrentUsername = username; // <-- set username (masv for student accounts)
                             }
                         }
                     }
@@ -172,6 +177,54 @@ namespace StudentInfoManagement
                         insertCmd.Parameters.AddWithValue("@Name", roleName);
                         insertCmd.ExecuteNonQuery();
                     }
+                }
+            }
+        }
+        public bool ChangePassword(string userId, string currentPassword, string newPassword, out string message)
+        {
+            message = "";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Gọi SP: sp_ChangePassword
+                    using (SqlCommand cmd = new SqlCommand("sp_ChangePassword", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // UserID trong DB là INT, cần chuyển đổi từ string GlobalConfig
+                        if (!int.TryParse(userId, out int userIDInt))
+                        {
+                            message = "ID người dùng không hợp lệ.";
+                            return false;
+                        }
+
+                        cmd.Parameters.AddWithValue("@UserID", userIDInt); // Gửi INT
+                        cmd.Parameters.AddWithValue("@CurrentPassword", currentPassword);
+                        cmd.Parameters.AddWithValue("@NewPassword", newPassword);
+
+                        // Output parameters
+                        SqlParameter resultParam = new SqlParameter("@ResultCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                        SqlParameter msgParam = new SqlParameter("@Message", SqlDbType.NVarChar, 100) { Direction = ParameterDirection.Output };
+
+                        cmd.Parameters.Add(resultParam);
+                        cmd.Parameters.Add(msgParam);
+
+                        cmd.ExecuteNonQuery();
+
+                        // Đọc giá trị trả về
+                        int resultCode = (int)resultParam.Value;
+                        message = msgParam.Value.ToString();
+
+                        return resultCode == 1; // 1 là thành công theo SP
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = "Lỗi Database khi đổi mật khẩu: " + ex.Message;
+                    return false;
                 }
             }
         }

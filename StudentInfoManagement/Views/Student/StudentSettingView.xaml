@@ -212,7 +212,7 @@
                                 <TextBlock Text="Xác nhận mật khẩu mới" Style="{StaticResource LabelStyle}"/>
                                 <PasswordBox x:Name="pbConfirmPass" Style="{StaticResource PasswordStyle}" Margin="0,0,0,15"/>
 
-                                <Button Content="Đổi Mật Khẩu" Click="BtnChangePass_Click"
+                                <Button Content="Đổi Mật Khẩu" 
                                         HorizontalAlignment="Left" Width="120" Height="40"
                                         Background="White" Foreground="#DC2626" FontWeight="SemiBold" BorderThickness="1" BorderBrush="#DC2626" Cursor="Hand">
                                     <Button.Template>

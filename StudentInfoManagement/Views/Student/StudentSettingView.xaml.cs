@@ -1,8 +1,9 @@
-﻿using StudentInfoManagement; // Namespace chứa DatabaseHelper và GlobalConfig
+﻿using StudentInfoManagement;
 using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace StudentInfoManagement.Views
 {
@@ -19,52 +20,45 @@ namespace StudentInfoManagement.Views
 
         private void LoadStudentData()
         {
-            // 1. Lấy Student ID (masv) từ biến Global
-            string studentID = GlobalConfig.CurrentUserID;
+            // Use the login username as student identifier. For student accounts Username = masv.
+            // GlobalConfig.CurrentUserID remains the numeric DB UserID for admin/password operations.
+            string studentID = !string.IsNullOrEmpty(GlobalConfig.CurrentUsername) ? GlobalConfig.CurrentUsername :     GlobalConfig.CurrentUserID;
 
             if (string.IsNullOrEmpty(studentID))
             {
                 txtFullName.Text = "Lỗi: Chưa đăng nhập.";
+                txtDisplayName.Text = "Khách";
+                txtDisplayRole.Text = "Chưa Đăng nhập";
                 return;
             }
 
             try
             {
-                // 2. Gọi phương thức lấy dữ liệu
                 DataTable dt = _dbHelper.GetStudentInfo(studentID);
 
                 if (dt.Rows.Count > 0)
                 {
                     DataRow row = dt.Rows[0];
 
-                    // 3. Hiển thị dữ liệu lên các control với tên cột mới
+                    // Hiển thị dữ liệu
                     txtID.Text = studentID;
-
-                    // Cột: hoten
                     txtFullName.Text = row["hoten"].ToString();
-
-                    // Cột: tenlop
                     txtClassDept.Text = row["tenlop"].ToString();
-
-                    // Cột: email
                     txtEmail.Text = row["email"].ToString();
-
-                    // Cột: sdt
                     txtPhone.Text = row["sdt"].ToString();
-
-                    // Cột: diachi
                     txtAddress.Text = row["diachi"].ToString();
-
-                    // LƯU Ý: Bảng Student không có cột Ngày sinh (DoB).
-                    // Nếu bạn có control txtDob, giá trị này sẽ không được điền.
 
                     // Update UI Profile Card
                     txtDisplayName.Text = txtFullName.Text;
-                    txtDisplayRole.Text = "Sinh viên - " + txtClassDept.Text;
+
+                    // Lấy ra tên khóa (giả sử K15)
+                    string className = txtClassDept.Text;
+                    string cohort = className.Contains("-") ? className.Split('-')[0].Trim() : className;
+                    txtDisplayRole.Text = "Sinh viên - " + cohort;
                 }
                 else
                 {
-                    MessageBox.Show($"Không tìm thấy thông tin sinh viên có Mã: {studentID}. Vui lòng kiểm tra bảng Student.", "Lỗi Dữ liệu");
+                    txtFullName.Text = "Lỗi: Không tìm thấy thông tin sinh viên.";
                 }
             }
             catch (Exception ex)
@@ -75,29 +69,58 @@ namespace StudentInfoManagement.Views
 
         private void BtnChangePass_Click(object sender, RoutedEventArgs e)
         {
-            // Validate
-            if (string.IsNullOrEmpty(pbCurrentPass.Password) ||
-                string.IsNullOrEmpty(pbNewPass.Password) ||
-                string.IsNullOrEmpty(pbConfirmPass.Password))
+            string currentPass = pbCurrentPass.Password;
+            string newPass = pbNewPass.Password;
+            string confirmPass = pbConfirmPass.Password;
+            string userId = GlobalConfig.CurrentUserID;
+
+            // Validate chung
+            if (string.IsNullOrEmpty(currentPass) || string.IsNullOrEmpty(newPass) || string.IsNullOrEmpty(confirmPass))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Vui lòng nhập đầy đủ thông tin mật khẩu!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (pbNewPass.Password != pbConfirmPass.Password)
+            if (newPass != confirmPass)
             {
-                MessageBox.Show("Mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Mật khẩu mới và mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            // ... (Logic gọi xuống Database để đổi pass ở đây) ...
+            if (newPass.Length < 6)
+            {
+                MessageBox.Show("Mật khẩu mới phải tối thiểu 6 ký tự!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (currentPass == newPass)
+            {
+                MessageBox.Show("Mật khẩu mới phải khác mật khẩu hiện tại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            // Xóa trắng ô nhập
-            pbCurrentPass.Clear();
-            pbNewPass.Clear();
-            pbConfirmPass.Clear();
+            try
+            {
+                string message;
+                bool success = _dbHelper.ChangePassword(userId, currentPass, newPass, out message);
+
+                if (success)
+                {
+                    MessageBox.Show(message, "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Xóa trắng ô nhập
+                    pbCurrentPass.Clear();
+                    pbNewPass.Clear();
+                    pbConfirmPass.Clear();
+                }
+                else
+                {
+                    MessageBox.Show(message, "Lỗi Đổi mật khẩu", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi hệ thống khi đổi mật khẩu: " + ex.Message, "Lỗi Database", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
-}
+}   
