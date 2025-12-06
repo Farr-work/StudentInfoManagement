@@ -57,7 +57,7 @@
                 </DockPanel>
 
                 <StackPanel Grid.Row="1" Margin="15,0,20,0">
-                    <!-- Nút Trang Chủ -->
+                    
                     <Button x:Name="BtnDashboard" Style="{StaticResource MenuButtonStyle}" Click="MenuButton_Click" Tag="StudentDashboard" Height="66">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" Margin="0,2,10,0" VerticalAlignment="Center" FontSize="20"/>

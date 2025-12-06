@@ -4,21 +4,17 @@ using System.Data;
 
 namespace StudentInfoManagement
 {
-    // --- GLOBAL CONFIG (Giữ lại để tránh lỗi các file khác đang dùng) ---
     public static class GlobalConfig
     {
         public static string CurrentUserID { get; set; } = string.Empty;
-        // Add CurrentUsername to store the login username (for students it's masv)
         public static string CurrentUsername { get; set; } = string.Empty;
     }
 
     public class DatabaseHelper
     {
-        // Chuỗi kết nối chuẩn
         private readonly string _connectionString =
             "Data Source=SQL8011.site4now.net;Initial Catalog=db_ac1c01_qlsv;User Id=db_ac1c01_qlsv_admin;Password=qlsv123@;TrustServerCertificate=True";
 
-        // --- 1. XỬ LÝ ĐĂNG NHẬP (AUTH) ---
         public string AuthenticateUser(string username, string password, out string userId)
         {
             userId = "";
@@ -45,13 +41,8 @@ namespace StudentInfoManagement
                         {
                             if (reader.Read())
                             {
-                                // 1. Lấy Role
                                 role = reader["RoleName"].ToString();
-
-                                // 2. Lấy ID từ Database
                                 userId = reader["UserID"].ToString();
-
-                                // Cập nhật GlobalConfig:
                                 GlobalConfig.CurrentUserID = userId;
                                 GlobalConfig.CurrentUsername = username;
                             }
@@ -66,6 +57,7 @@ namespace StudentInfoManagement
 
             return role;
         }
+
         public DataTable GetDataTable(string sql)
         {
             DataTable dt = new DataTable();
@@ -82,14 +74,12 @@ namespace StudentInfoManagement
                 }
                 catch (Exception ex)
                 {
-                    // Ghi log lỗi nếu cần thiết
                     System.Diagnostics.Debug.WriteLine("SQL Error: " + ex.Message);
                 }
             }
             return dt;
         }
 
-        // 2. Phương thức thực thi lệnh (Insert/Update/Delete)
         public bool ExecuteNonQuery(string sql, Action<SqlCommand> parameterize = null)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -99,7 +89,7 @@ namespace StudentInfoManagement
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        parameterize?.Invoke(cmd); // Thêm tham số nếu có
+                        parameterize?.Invoke(cmd);
                         cmd.ExecuteNonQuery();
                         return true;
                     }
@@ -107,11 +97,11 @@ namespace StudentInfoManagement
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine("SQL Error: " + ex.Message);
-                    throw ex; // Ném lỗi ra để View xử lý hiển thị MessageBox
+                    throw ex;
                 }
             }
         }
-        // --- 2. LẤY THÔNG TIN SINH VIÊN (GIỮ NGUYÊN) ---
+
         public DataTable GetStudentInfo(string studentID)
         {
             string sqlQuery = @"
@@ -143,7 +133,6 @@ namespace StudentInfoManagement
             }
         }
 
-        // --- 3. CHỨC NĂNG ĐĂNG KÝ ADMIN (GIỮ NGUYÊN) ---
         public bool RegisterAdmin(string username, string password, out string message)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -152,7 +141,6 @@ namespace StudentInfoManagement
                 {
                     conn.Open();
 
-                    // B1: kiểm tra username tồn tại
                     string checkSql = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
                     using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
                     {
@@ -164,10 +152,8 @@ namespace StudentInfoManagement
                         }
                     }
 
-                    // B2: đảm bảo role Admin tồn tại
                     EnsureRoleExists(conn, 1, "Admin");
 
-                    // B3: thêm user mới
                     string insertSql = @"
                         INSERT INTO Users (Username, Password, FullName, RoleID, CreatedAt)
                         VALUES (@Username, @Password, N'Administrator', 1, GETDATE())";
@@ -196,7 +182,6 @@ namespace StudentInfoManagement
             return false;
         }
 
-        // --- HÀM PHỤ: ĐẢM BẢO ROLE TỒN TẠI (GIỮ NGUYÊN) ---
         private void EnsureRoleExists(SqlConnection conn, int roleId, string roleName)
         {
             string sqlCheck = "SELECT COUNT(*) FROM Roles WHERE RoleID = @ID";
@@ -219,8 +204,6 @@ namespace StudentInfoManagement
             }
         }
 
-        // --- 4. CHỨC NĂNG ĐỔI MẬT KHẨU (TỐI ƯU HÓA) ---
-        // SỬA: Loại bỏ logic Stored Procedure phức tạp, sử dụng logic SQL trực tiếp như SettingViews (nhưng vẫn bọc trong helper)
         public bool ChangePassword(string username, string currentPassword, string newPassword, out string message)
         {
             message = "";
@@ -231,8 +214,6 @@ namespace StudentInfoManagement
                 {
                     conn.Open();
 
-                    // STEP 1: Kiểm tra mật khẩu hiện tại có khớp với Username và Password cũ không.
-                    // Nếu Username là MaSV thì nó sẽ khớp với cột Username trong bảng Users
                     string checkSql = "SELECT UserID FROM Users WHERE Username = @Username AND Password = @OldPass";
                     object result;
 
@@ -250,9 +231,8 @@ namespace StudentInfoManagement
                         return false;
                     }
 
-                    string userId = result.ToString(); // Lấy UserID thực tế từ DB
+                    string userId = result.ToString();
 
-                    // STEP 2: Cập nhật mật khẩu mới cho ĐÚNG UserID đó
                     string updateSql = "UPDATE Users SET Password = @NewPass WHERE UserID = @ID";
 
                     using (SqlCommand updateCmd = new SqlCommand(updateSql, conn))

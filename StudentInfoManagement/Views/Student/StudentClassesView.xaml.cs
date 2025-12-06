@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using Microsoft.Data.SqlClient; // Dùng thư viện mới
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,17 +12,16 @@ namespace StudentInfoManagement.Views.Student
 {
     public class LopHocDisplay
     {
-        public string MaLop { get; set; }        // SectionID (Đã xử lý bỏ _AUTO)
-        public string MaLopGoc { get; set; }     // SectionID Gốc (Dùng để gửi xuống DB khi hủy)
-        public string TenLop { get; set; }       // SubjectName
-        public string ThoiGian { get; set; }     // Semester
-        public string GiangVien { get; set; }    // LecturerName
+        public string MaLop { get; set; }
+        public string MaLopGoc { get; set; }
+        public string TenLop { get; set; }
+        public string ThoiGian { get; set; }
+        public string GiangVien { get; set; }
         public int SiSo { get; set; }
         public int MaxCapacity { get; set; }
 
         public string SiSoHienTai => $"{SiSo}/{MaxCapacity}";
 
-        // Màu nút Hủy (Đỏ)
         public Brush ButtonColor => (Brush)new BrushConverter().ConvertFrom("#EF4444");
     }
 
@@ -39,15 +38,13 @@ namespace StudentInfoManagement.Views.Student
             InitializeComponent();
             _danhSachLopGoc = new ObservableCollection<LopHocDisplay>();
             _danhSachLopHienThi = new ObservableCollection<LopHocDisplay>();
-
-            // Lấy ID thật
             _currentStudentID = GlobalConfig.CurrentUserID;
             ListLop.ItemsSource = _danhSachLopHienThi;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(_currentStudentID)) _currentStudentID = "SV001"; // Fallback nếu lỗi
+            if (string.IsNullOrEmpty(_currentStudentID)) _currentStudentID = "SV001";
             LoadRegisteredClasses();
         }
 
@@ -58,9 +55,9 @@ namespace StudentInfoManagement.Views.Student
 
             string query = @"
                 SELECT 
-                    S.SectionID,        
-                    Sub.SubjectName,    
-                    S.Semester,         
+                    S.SectionID,
+                    Sub.SubjectName,
+                    S.Semester,
                     ISNULL(L.LecturerName, 'Chưa phân công') AS LecturerName,
                     ISNULL(S.MaxCapacity, 65) AS MaxCapacity,
                     (SELECT COUNT(*) FROM REGISTRATIONS CountR WHERE CountR.SectionID = S.SectionID) AS CurrentSiSo
@@ -86,14 +83,12 @@ namespace StudentInfoManagement.Views.Student
                             while (reader.Read())
                             {
                                 string sectionIDRaw = reader["SectionID"].ToString();
-
-                                // LOGIC SỬA: Xóa đuôi _AUTO để hiển thị đẹp hơn
                                 string sectionIDDisplay = sectionIDRaw.Replace("_AUTO", "");
 
                                 _danhSachLopGoc.Add(new LopHocDisplay
                                 {
-                                    MaLopGoc = sectionIDRaw,      // Giữ lại ID gốc để dùng khi xóa
-                                    MaLop = sectionIDDisplay,     // ID để hiển thị
+                                    MaLopGoc = sectionIDRaw,
+                                    MaLop = sectionIDDisplay,
                                     TenLop = reader["SubjectName"].ToString(),
                                     ThoiGian = reader["Semester"].ToString(),
                                     GiangVien = reader["LecturerName"].ToString(),
@@ -113,13 +108,11 @@ namespace StudentInfoManagement.Views.Student
             }
         }
 
-        // --- HÀM XỬ LÝ HỦY MÔN ---
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
             if (btn == null || btn.Tag == null) return;
 
-            // Lấy SectionID GỐC (có chứa _AUTO nếu có) để tìm trong DB
             string sectionIdToDelete = btn.Tag.ToString();
 
             if (MessageBox.Show($"Bạn có chắc chắn muốn hủy môn học này không?", "Xác nhận hủy", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -129,7 +122,6 @@ namespace StudentInfoManagement.Views.Student
                     try
                     {
                         conn.Open();
-                        // Xóa bản ghi trong bảng REGISTRATIONS
                         string sql = "DELETE FROM REGISTRATIONS WHERE masv = @MaSV AND SectionID = @SecID";
 
                         using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -141,7 +133,7 @@ namespace StudentInfoManagement.Views.Student
                             if (rows > 0)
                             {
                                 MessageBox.Show("Đã hủy môn học thành công!", "Thông báo");
-                                LoadRegisteredClasses(); // Tải lại danh sách
+                                LoadRegisteredClasses();
                             }
                             else
                             {

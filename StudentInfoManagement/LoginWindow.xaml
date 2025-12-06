@@ -12,7 +12,6 @@
                HorizontalAlignment="Left" Margin="28,70,0,0" VerticalAlignment="Top" 
                FontSize="14" Foreground="Gray"/>
 
-        <!-- Username Field -->
         <Grid Margin="25,120,25,0" VerticalAlignment="Top">
             <Label Content="Mã Sinh Viên / Tên Đăng Nhập:" Foreground="#555" FontWeight="SemiBold"/>
             <Border BorderBrush="#DDD" BorderThickness="1" Margin="0,30,0,0" CornerRadius="8" Height="45">
@@ -25,7 +24,7 @@
             </Border>
         </Grid>
 
-        <!-- Password Field -->
+        
         <Grid Margin="25,200,25,0" VerticalAlignment="Top">
             <Label Content="Mật Khẩu:" Foreground="#555" FontWeight="SemiBold"/>
             <Border BorderBrush="#DDD" BorderThickness="1" Margin="0,30,0,0" CornerRadius="8" Height="45">
@@ -38,7 +37,7 @@
             </Border>
         </Grid>
 
-        <!-- Login Button: Đã thêm sự kiện Click -->
+
         <Button x:Name="LoginButton" 
                 Content="ĐĂNG NHẬP"
                 Margin="25,300,25,0" 
@@ -73,7 +72,6 @@
             </Button.Style>
         </Button>
 
-        <!-- Register Link: Đã thêm sự kiện MouseDown -->
         <TextBlock x:Name="formdki" Text="Bạn chưa có tài khoản?" 
                    HorizontalAlignment="Center" 
                    Margin="0,380,0,0" 
